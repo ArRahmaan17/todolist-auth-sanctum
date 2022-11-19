@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [Lists::class, 'index']);
 Route::get('/show', [Lists::class, 'show']);
-Route::post('/create', [Lists::class, 'create']);
+Route::post('/store', [Lists::class, 'store']);
 Route::get('/edit', [Lists::class, 'edit']);
 Route::put('/update', [Lists::class, 'update']);
 Route::delete('/delete', [Lists::class, 'destroy']);
