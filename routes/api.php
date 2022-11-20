@@ -57,8 +57,8 @@ Route::post('/store', function (Request $request) {
     return Response()->json($response, 200);
 });
 
-Route::post('/edit', function (Request $request) {
-    $list = lists::specificList((int)$request->id);
+Route::get('/edit/{id}', function ($id) {
+    $list = lists::specificList((int)$id);
     if (empty($list)) {
         $response = [
             'status' => 'failed',
