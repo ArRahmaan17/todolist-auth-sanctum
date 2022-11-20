@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use PhpParser\Node\Expr\Cast\Int_;
 
 class lists extends Model
 {
@@ -23,10 +24,14 @@ class lists extends Model
     }
     static function specificList(Int $id)
     {
-        return DB::table('lists')->find($id)->get();
+        return DB::table('lists')->where('id', $id)->first();
     }
     static function updateSpecificList(array $updatedList)
     {
-        return DB::table('lists')->find($updatedList['id'])->update($updatedList);
+        return DB::table('lists')->where('id', $updatedList['id'])->update($updatedList);
+    }
+    static function removeList(Int $id)
+    {
+        return DB::table('lists')->where('id', $id)->delete();
     }
 }
