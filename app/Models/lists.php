@@ -24,7 +24,7 @@ class lists extends Model
     }
     static function specificList(Int $id)
     {
-        return DB::table('lists')->where('id', $id)->first();
+        return json_encode(DB::table('lists')->where('id', $id)->first());
     }
     static function updateSpecificList(array $updatedList)
     {

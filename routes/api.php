@@ -59,7 +59,7 @@ Route::post('/store', function (Request $request) {
 
 Route::get('/edit/{id}', function ($id) {
     $list = lists::specificList((int)$id);
-    if (empty($list)) {
+    if (empty(json_decode($list))) {
         $response = [
             'status' => 'failed',
             'message' => "we cant find your list ",
