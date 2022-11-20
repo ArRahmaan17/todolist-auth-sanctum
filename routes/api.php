@@ -78,7 +78,7 @@ Route::get('/edit/{id}', function ($id) {
 
 Route::put('/update', function (Request $request) {
     $request->validate(['name' => 'required']);
-    $updatedList = ['id' => $request->id, 'name' => $request->name, 'updated_at' => now(),];
+    $updatedList = ['id' => $request->id, 'name' => $request->name, 'updated_at' => now()];
     if (!lists::updateSpecificList($updatedList)) {
         $response = [
             'status' => 'failed',
