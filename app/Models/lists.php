@@ -16,7 +16,7 @@ class lists extends Model
 
     static function showAllList()
     {
-        return DB::table('lists')->get();
+        return json_encode(DB::table('lists')->get());
     }
     static function storeList(array $list)
     {

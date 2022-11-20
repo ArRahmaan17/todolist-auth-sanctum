@@ -22,7 +22,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('/show', function () {
     $data = lists::showAllList();
-    if (empty($data)) {
+    if (empty(json_decode($data))) {
         $response = [
             'status' => 'failed',
             'message' => 'we are cant find your lists',
