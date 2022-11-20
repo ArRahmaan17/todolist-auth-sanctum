@@ -33,7 +33,7 @@ Route::get('/show', function () {
     $response = [
         'status' => 'success',
         'message' => 'we found your lists',
-        'data' => $data,
+        'data' => json_decode($data),
     ];
     return Response()->json($response, 200);
 });
@@ -70,7 +70,7 @@ Route::get('/edit/{id}', function ($id) {
     $response = [
         'status' => 'success',
         'message' => "we find your list ",
-        'data' => $list,
+        'data' => json_decode($list),
     ];
     return Response()->json($response, 404);
 });

@@ -15,7 +15,7 @@ class Lists extends Controller
      */
     public function index()
     {
-        return redirect('/show');
+        return redirect('/api/show');
     }
 
     /**
