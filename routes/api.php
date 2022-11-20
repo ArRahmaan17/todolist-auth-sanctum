@@ -41,7 +41,8 @@ Route::get('/show', function () {
 Route::post('/store', function (Request $request) {
     $request->validate(['name' => 'required']);
     $data = [
-        'name' => $request->name
+        'name' => $request->name,
+        'created_at' => now(),
     ];
     if (!lists::storeList($data)) {
         $response = [
@@ -77,7 +78,7 @@ Route::get('/edit/{id}', function ($id) {
 
 Route::put('/update', function (Request $request) {
     $request->validate(['name' => 'required']);
-    $updatedList = ['id' => $request->id, 'name' => $request->name];
+    $updatedList = ['id' => $request->id, 'name' => $request->name, 'updated_at' => now(),];
     if (!lists::updateSpecificList($updatedList)) {
         $response = [
             'status' => 'failed',
