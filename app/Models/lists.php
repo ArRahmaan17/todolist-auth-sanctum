@@ -11,7 +11,7 @@ class lists extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'list',
+        'name',
     ];
 
     static function showAllList()
