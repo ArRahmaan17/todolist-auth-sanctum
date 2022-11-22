@@ -105,5 +105,5 @@ Route::delete('/delete/{id}', function ($id) {
         'status' => 'success',
         'message' => 'your list successfully removed'
     ];
-    return Response()->json($response, 401);
+    return Response()->json($response, 200);
 });
