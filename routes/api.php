@@ -73,7 +73,7 @@ Route::get('/edit/{id}', function ($id) {
         'message' => "we find your list ",
         'data' => json_decode($list),
     ];
-    return Response()->json($response, 404);
+    return Response()->json($response, 200);
 });
 
 Route::put('/update', function (Request $request) {
