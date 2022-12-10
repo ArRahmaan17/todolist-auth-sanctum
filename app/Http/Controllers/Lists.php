@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\lists as ModelsLists;
 use Facade\FlareClient\Http\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Lists extends Controller
 {
@@ -15,7 +16,7 @@ class Lists extends Controller
      */
     public function index()
     {
-        return redirect('/api/show');
+        dd(Auth::user());
     }
 
     /**
