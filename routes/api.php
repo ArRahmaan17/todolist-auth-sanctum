@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AuthorController;
 use App\Http\Controllers\Api\LibraryController;
 use App\Http\Controllers\UserController;
 use App\Models\lists;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,9 +20,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::post('login', [AuthController::class, 'authentication'])->name('login');
+Route::post('registration', [AuthController::class, 'registration'])->name('registration');
 
 Route::get('/show', function () {
     $data = lists::showAllList();
@@ -112,21 +112,23 @@ Route::delete('/delete/{id}', function ($id) {
 });
 
 
-// // online 
-// Route::post('login', [AuthController::class, 'authentication']);
-// Route::post('registration', [AuthController::class, 'registration']);
-// // library routes
-// Route::get('library', [LibraryController::class, 'index'])->name('library.index');
-// Route::get('library/search/', [LibraryController::class, 'filter'])->name('library.filter');
-// Route::post('library/store', [LibraryController::class, 'store'])->name('library.store');
-// Route::get('library/show/{id}', [LibraryController::class, 'show'])->name('library.show');
-// Route::put('library/update/{id}', [LibraryController::class, 'update'])->name('library.update');
-// Route::delete('library/delete/{id}', [LibraryController::class, 'delete'])->name('library.delete');
+// online
+Route::middleware('auth:sanctum')->group(function () {
 
-// // authors routes
-// Route::get('author', [AuthorController::class, 'index'])->name('authors.index');
-// Route::get('author/search/', [AuthorController::class, 'filter'])->name('authors.filter');
-// Route::post('author/store', [AuthorController::class, 'store'])->name('authors.store');
-// Route::get('author/show/{id}', [AuthorController::class, 'show'])->name('authors.show');
-// Route::put('author/update/{id}', [AuthorController::class, 'update'])->name('authors.update');
-// Route::delete('author/delete/{id}', [AuthorController::class, 'delete'])->name('authors.delete');
+    Route::post('logout', [AuthController::class, 'logout']);
+    // library routes
+    Route::get('library', [LibraryController::class, 'index'])->name('library.index');
+    Route::get('library/search/', [LibraryController::class, 'filter'])->name('library.filter');
+    Route::post('library/store', [LibraryController::class, 'store'])->name('library.store');
+    Route::get('library/show/{id}', [LibraryController::class, 'show'])->name('library.show');
+    Route::put('library/update/{id}', [LibraryController::class, 'update'])->name('library.update');
+    Route::delete('library/delete/{id}', [LibraryController::class, 'delete'])->name('library.delete');
+
+    // authors routes
+    Route::get('author', [AuthorController::class, 'index'])->name('authors.index');
+    Route::get('author/search/', [AuthorController::class, 'filter'])->name('authors.filter');
+    Route::post('author/store', [AuthorController::class, 'store'])->name('authors.store');
+    Route::get('author/show/{id}', [AuthorController::class, 'show'])->name('authors.show');
+    Route::put('author/update/{id}', [AuthorController::class, 'update'])->name('authors.update');
+    Route::delete('author/delete/{id}', [AuthorController::class, 'delete'])->name('authors.delete');
+});

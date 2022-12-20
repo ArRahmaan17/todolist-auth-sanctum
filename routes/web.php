@@ -19,8 +19,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+    Route::get('/', [Lists::class, 'index'])->name('lists');
 // Route::middleware('guest')->group(function () {
-//     Route::get('/', [Lists::class, 'index'])->name('lists');
 //     Route::get('/show', [Lists::class, 'show'])->name('list');
 //     Route::get('/login', [UserController::class, 'index'])->name('login');
 // });

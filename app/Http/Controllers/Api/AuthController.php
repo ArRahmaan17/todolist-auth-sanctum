@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -14,11 +13,13 @@ class AuthController extends Controller
     public function authentication(LoginRequest $request)
     {
         $credentials = ['email' => $request->email, 'password' => $request->password];
-        if (!Auth::attempt($credentials)) {
+        $user = User::whereEmail($credentials['email'])->first();
+        if (!$credentials || !Hash::check($credentials['password'], $user->password)) {
             $responses = ['status' => false, 'message' => "your credentials doesn't match to our records"];
             return Response()->json($responses, 401);
         }
-        $responses = ['status' => true, 'message' => 'you are successfully login'];
+        $token = $user->createToken('token')->plainTextToken;
+        $responses = ['status' => true, 'message' => 'you are successfully login', 'user' => $user, 'token' => $token];
         return Response()->json($responses, 200)->cookie('logged', true, 120);
     }
 
@@ -31,6 +32,17 @@ class AuthController extends Controller
             return Response()->json($response, 401);
         }
         $response = ['status' => true, 'message' => 'we successfully creating your account'];
+        return Response()->json($response, 200);
+    }
+
+    public function logout(Request $request)
+    {
+        $user = $request->user();
+        if (!$user->tokens()->currentAccessToken()->delete()) {
+            $response = ['status' => false, 'message' => 'we failed to logout your from the website'];
+            return Response()->json($response, 501);
+        }
+        $response = ['status' => true, 'message' => 'you successfully logged out from the website'];
         return Response()->json($response, 200);
     }
 }
