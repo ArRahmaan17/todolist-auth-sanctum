@@ -38,7 +38,8 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $user = $request->user();
-        if (!$user->tokens()->currentAccessToken()->delete()) {
+        $token = $user->tokens()->get()->toArray();
+        if (!$user->tokens()->where('id', $token[0]['id'])->delete()) {
             $response = ['status' => false, 'message' => 'we failed to logout your from the website'];
             return Response()->json($response, 501);
         }
