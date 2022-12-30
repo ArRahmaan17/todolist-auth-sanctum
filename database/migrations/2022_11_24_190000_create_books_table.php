@@ -22,7 +22,6 @@ class CreateBooksTable extends Migration
             $table->bigInteger('quantity');
             $table->boolean('status')->default(true);
             $table->foreignId('author_id')->constrained('authors');
-            $table->foreignId('library_id')->constrained('libraries');
             $table->foreignId('category_id')->constrained('categories');
             $table->timestamps();
         });
