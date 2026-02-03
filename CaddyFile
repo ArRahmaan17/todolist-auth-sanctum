@@ -1,0 +1,18 @@
+:80 {
+    root * public
+    encode zstd gzip
+    php_server
+    @static {
+        file
+        path *.ico *.css *.js *.gif *.jpg *.jpeg *.png *.svg *.woff *.woff2
+    }
+    header @static Cache-Control "public, max-age=31536000, must-revalidate"
+    log {
+        output file storage/logs/caddy.log
+    }
+    header {
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        Referrer-Policy no-referrer-when-downgrade
+    }
+}
