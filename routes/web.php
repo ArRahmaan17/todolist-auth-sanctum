@@ -1,12 +1,8 @@
 <?php
 
-use App\Http\Controllers\authorsController;
-use App\Http\Controllers\booksController;
-use App\Http\Controllers\categoryController;
-use App\Http\Controllers\LibraryController;
 use App\Http\Controllers\Lists;
-use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,22 +15,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::group(['middleware' => 'guest'], function () {
+    Route::get('/login', [UserController::class, 'index'])->name('login');
+    Route::post('/login', [UserController::class, 'authenticate'])->name('login.post');
+    Route::get('/register', [UserController::class, 'register'])->name('register');
+    Route::post('/register', [UserController::class, 'store'])->name('register.store');
+});
+
+Route::group(['middleware' => 'auth'], function () {
     Route::get('/', [Lists::class, 'index'])->name('lists');
-// Route::middleware('guest')->group(function () {
-//     Route::get('/show', [Lists::class, 'show'])->name('list');
-//     Route::get('/login', [UserController::class, 'index'])->name('login');
-// });
-
-// Route::middleware('logged')->group(function () {
-//     // Crud TodoList
-//     Route::post('/store', [Lists::class, 'store']);
-//     Route::get('/edit', [Lists::class, 'edit']);
-//     Route::put('/update', [Lists::class, 'update']);
-//     Route::delete('/delete', [Lists::class, 'destroy']);
-
-//     // CRUD Library
-//     Route::resource('library', LibraryController::class);
-//     Route::resource('category', categoryController::class);
-//     Route::resource('authors', authorsController::class);
-//     Route::resource('books', booksController::class);
-// });
+    Route::post('/lists', [Lists::class, 'store'])->name('lists.store');
+    Route::put('/lists/{id}', [Lists::class, 'update'])->name('lists.update');
+    Route::patch('/lists/{id}/toggle', [Lists::class, 'toggle'])->name('lists.toggle');
+    Route::delete('/lists/{id}', [Lists::class, 'destroy'])->name('lists.destroy');
+    Route::post('/logout', [UserController::class, 'logout'])->name('logout');
+});

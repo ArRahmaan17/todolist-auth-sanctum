@@ -8,14 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Books extends Model
 {
     use HasFactory;
+
     protected $fillable = ['title', 'synopsis', 'quantity', 'status', 'author_id', 'category_id'];
 
-    static function getAllBooks()
+    public static function getAllBooks()
     {
         return self::all();
     }
 
-    static function storeNewBook($newBooks)
+    public static function storeNewBook($newBooks)
     {
         return self::insert($newBooks);
     }

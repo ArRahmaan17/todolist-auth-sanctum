@@ -27,11 +27,13 @@ class AuthorRequest extends FormRequest
             'author_name' => 'required',
         ];
     }
+
     public function authorAccount()
     {
         $data = [
             'author_name' => $this->authorName,
         ];
+
         return $data;
     }
 }

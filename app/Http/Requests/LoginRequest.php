@@ -28,12 +28,14 @@ class LoginRequest extends FormRequest
             'password' => 'required',
         ];
     }
+
     public function authAccount()
     {
         $data = [
             'email' => $this->email,
             'password' => $this->password,
         ];
+
         return $data;
     }
 }

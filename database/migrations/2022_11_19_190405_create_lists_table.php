@@ -13,9 +13,11 @@ class CreateListsTable extends Migration
      */
     public function up()
     {
-        Schema::create('lists', function (Blueprint $table) {
+        Schema::create('list_todos', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->boolean('is_done')->default(false);
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -27,6 +29,6 @@ class CreateListsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('lists');
+        Schema::dropIfExists('list_todos');
     }
 }

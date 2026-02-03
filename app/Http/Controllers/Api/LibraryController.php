@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Library;
 use App\Http\Controllers\Controller;
+use App\Models\Library;
 use Illuminate\Http\Request;
 
 class LibraryController extends Controller
@@ -16,16 +16,20 @@ class LibraryController extends Controller
     public function index()
     {
         $libraries = json_encode(Library::getAllLibraries());
-        if ($libraries === "[]") {
+        if ($libraries === '[]') {
             $response = ['status' => false, 'message' => 'Libraries not found', 'data' => null];
+
             return Response()->json($response, 404);
         }
         $response = ['status' => true, 'message' => 'We found the data', 'data' => json_decode($libraries)];
+
         return Response()->json($response, 200);
     }
+
     /**
      * Filter a Library of the resource.
-     * @param String filter
+     *
+     * @param string filter
      * @return \Illuminate\Http\Response
      */
     public function filter(Request $request)
@@ -34,25 +38,27 @@ class LibraryController extends Controller
         $address = $request->query('address');
         $filter = [
             'name' => $name,
-            'address' => $address
+            'address' => $address,
         ];
-        if ($name === null || $name === "") {
-            $response = ['status' => false, 'message' => "your credentials is not valid"];
+        if ($name === null || $name === '') {
+            $response = ['status' => false, 'message' => 'your credentials is not valid'];
+
             return Response()->json($response, 401);
         }
         $data = Library::searchLibrary($filter);
-        if (json_encode($data) === "[]") {
-            $response = ['status' => false, 'message' => "we not found your library", 'data' => null];
+        if (json_encode($data) === '[]') {
+            $response = ['status' => false, 'message' => 'we not found your library', 'data' => null];
+
             return Response()->json($response, 404);
         }
-        $response = ['status' => true, 'message' => "we found your library", 'data' => $data];
+        $response = ['status' => true, 'message' => 'we found your library', 'data' => $data];
+
         return Response()->json($response, 200);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -60,11 +66,13 @@ class LibraryController extends Controller
         $request->validate(['libraryName' => 'required|alpha', 'libraryPhone' => 'required|numeric', 'libraryAddress' => 'required|alpha', 'libraryEmail' => 'required|email']);
         $data = ['library_name' => $request->libraryName, 'library_address' => $request->libraryAddress, 'library_phone_number' => $request->libraryPhone, 'library_email' => $request->libraryEmail, 'library_owner' => 1];
         $status = Library::storeAccount($data);
-        if (!$status) {
-            $response = ['status' => $status, 'message' => "we failed to store your library"];
+        if (! $status) {
+            $response = ['status' => $status, 'message' => 'we failed to store your library'];
+
             return Response()->json($response, 401);
         }
-        $response = ['status' => $status, 'message' => "we successfully stored your library"];
+        $response = ['status' => $status, 'message' => 'we successfully stored your library'];
+
         return Response()->json($response, 200);
     }
 
@@ -78,17 +86,18 @@ class LibraryController extends Controller
     {
         $data = Library::showSpecifiedLibrary($id);
         if ($data == null) {
-            $response = ['status' => false, 'message' => "we failed to find your specified library", 'data' => null];
+            $response = ['status' => false, 'message' => 'we failed to find your specified library', 'data' => null];
+
             return Response()->json($response, 404);
         }
-        $response = ['status' => true, 'message' => "we successfully find your specified library", 'data' => $data];
+        $response = ['status' => true, 'message' => 'we successfully find your specified library', 'data' => $data];
+
         return Response()->json($response, 200);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
@@ -96,11 +105,13 @@ class LibraryController extends Controller
     {
         $data = ['library_name' => $request->libraryName, 'library_address' => $request->libraryAddress, 'library_phone_number' => $request->libraryPhone, 'library_email' => $request->libraryEmail, 'library_owner' => 1];
         $status = Library::updateSpecifiedLibrary($id, $data);
-        if (!$status) {
-            $response = ['status' => $status, 'message' => "we failed to updated your library"];
+        if (! $status) {
+            $response = ['status' => $status, 'message' => 'we failed to updated your library'];
+
             return Response()->json($response, 401);
         }
-        $response = ['status' => $status, 'message' => "we successfully updated your library"];
+        $response = ['status' => $status, 'message' => 'we successfully updated your library'];
+
         return Response()->json($response, 200);
     }
 
@@ -113,11 +124,13 @@ class LibraryController extends Controller
     public function destroy($id)
     {
         $data = Library::destroySpecifiedLibrary($id);
-        if (!$data) {
-            $response = ['status' => false, 'message' => "we failed to destroy your specified library"];
+        if (! $data) {
+            $response = ['status' => false, 'message' => 'we failed to destroy your specified library'];
+
             return Response()->json($response, 404);
         }
-        $response = ['status' => true, 'message' => "we successfully to destroy your specified library"];
+        $response = ['status' => true, 'message' => 'we successfully to destroy your specified library'];
+
         return Response()->json($response, 200);
     }
 }

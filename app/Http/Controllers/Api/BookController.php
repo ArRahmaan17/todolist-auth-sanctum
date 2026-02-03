@@ -18,9 +18,11 @@ class BookController extends Controller
         $allBooks = Books::getAllBooks();
         if ($allBooks == []) {
             $response = ['message' => 'books not found', 'status' => false, 'data' => $allBooks];
+
             return Response()->json($response, 404);
         }
         $response = ['message' => 'successfully founding all books', 'status' => true, 'data' => $allBooks];
+
         return Response()->json($response, 200);
     }
 
@@ -37,17 +39,18 @@ class BookController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
         $newBook = ['title' => $request->title, 'synopsis' => $request->synopsis, 'quantity' => $request->quantity, 'status' => $request->status, 'author_id' => $request->author, 'category_id' => $request->category];
-        if (!Books::storeNewBook($newBook)) {
+        if (! Books::storeNewBook($newBook)) {
             $response = ['message' => 'books cant be saved', 'status' => false];
+
             return Response()->json($response, 404);
         }
         $response = ['message' => 'successfully new books record', 'status' => true];
+
         return Response()->json($response, 200);
     }
 
@@ -76,7 +79,6 @@ class BookController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
