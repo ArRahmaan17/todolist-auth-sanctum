@@ -10,6 +10,22 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    /**
+     * @OA\Post(
+     *     path="/api/login",
+     *     summary="Sign in",
+     *     tags={"Authentication"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="email", type="string", format="email", example="user@example.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="Secret123")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Login successful"),
+     *     @OA\Response(response=401, description="Invalid credentials")
+     * )
+     */
     public function authentication(LoginRequest $request)
     {
         $credentials = ['email' => $request->email, 'password' => $request->password];
@@ -25,6 +41,23 @@ class AuthController extends Controller
         return Response()->json($responses, 200)->cookie('logged', true, 120);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/registration",
+     *     summary="Register a new user",
+     *     tags={"Authentication"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string", example="User Name"),
+     *             @OA\Property(property="email", type="string", format="email", example="user@example.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="Secret123")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Registration successful"),
+     *     @OA\Response(response=401, description="Registration failed")
+     * )
+     */
     public function registration(Request $request)
     {
         $request->validate(['name' => 'required', 'email' => 'required|unique:users,email', 'password' => 'required']);
@@ -39,6 +72,16 @@ class AuthController extends Controller
         return Response()->json($response, 200);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/logout",
+     *     summary="Sign out",
+     *     tags={"Authentication"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(response=200, description="Logout successful"),
+     *     @OA\Response(response=501, description="Logout failed")
+     * )
+     */
     public function logout(Request $request)
     {
         $user = $request->user();
