@@ -8,7 +8,6 @@
         "php": "^8.1",
         "darkaonline/l5-swagger": "^8.6",
         "doctrine/dbal": "^3.6",
-        "firebase/php-jwt": "^6.3",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2",
