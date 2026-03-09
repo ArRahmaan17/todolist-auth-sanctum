@@ -1,2 +1,23 @@
 User-agent: *
 Disallow: /
+
+# Allow Meta preview bots
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Facebot
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: Meta-ExternalFetcher
+Allow: /
+
+# Optional: allow Twitter preview
+User-agent: Twitterbot
+Allow: /
+
+# Optional: allow Discord preview
+User-agent: Discordbot
+Allow: /
