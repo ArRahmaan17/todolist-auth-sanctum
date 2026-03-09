@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-slate-50 dark:bg-slate-950">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -77,7 +77,7 @@
     <div class="py-10 animate-in fade-in duration-1000">
         <header class="mb-8">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left">
-                <h1 class="text-4xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">Dashboard</h1>
+                <h1 class="text-4xl font-bold tracking-tight text-slate-600 dark:text-white mb-2">Dashboard</h1>
                 <p class="text-slate-600 dark:text-slate-400">Manage your daily tasks and stay productive.</p>
             </div>
         </header>
