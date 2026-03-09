@@ -96,7 +96,7 @@
             </div>
 
             <!-- Footer Section -->
-            <p class="mt-10 text-center text-xs text-slate-600 animate-in fade-in duration-1000 delay-500">
+            <p class="mt-10 text-center text-xs text-slate-600 dark:text-slate-400 animate-in fade-in duration-1000 delay-500">
                 &copy; {{ date('Y') }} {{ $app_name ?? 'TodoList' }}. All rights reserved. Built with ❤️ for your productivity.
             </p>
         </div>
