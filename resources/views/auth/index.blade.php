@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-950">
+<html lang="en" class="h-full bg-slate-50 dark:bg-slate-950">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,21 +9,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Outfit', sans-serif; }
-        .mesh-gradient {
-            background-color: #020617;
-            background-image: 
-                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
-                radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
-                radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%), 
-                radial-gradient(at 0% 50%, hsla(225,39%,30%,1) 0, transparent 50%), 
-                radial-gradient(at 100% 50%, hsla(253,16%,7%,1) 0, transparent 50%), 
-                radial-gradient(at 0% 100%, hsla(339,49%,30%,1) 0, transparent 50%), 
-                radial-gradient(at 50% 100%, hsla(225,39%,30%,1) 0, transparent 50%), 
-                radial-gradient(at 100% 100%, hsla(253,16%,7%,1) 0, transparent 50%);
-        }
-    </style>
 </head>
 <body class="h-full antialiased text-slate-400 mesh-gradient selection:bg-indigo-500/30 selection:text-indigo-200">
     <div class="flex min-h-full items-center justify-center p-6 lg:p-8">

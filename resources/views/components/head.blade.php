@@ -12,3 +12,11 @@
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://todos.rahmaanms.my.id/preview.png">
+
+<script>
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+</script>
