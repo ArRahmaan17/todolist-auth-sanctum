@@ -14,12 +14,8 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: "8.2"
-        extensions: mbstring, dom, curl, libxml, mysql, sqlite, bcmath, zip
-        coverage: none
+    - name: Check PHP
+      run: php -v
 
     - name: Get Composer Cache Directory
       id: composer-cache
