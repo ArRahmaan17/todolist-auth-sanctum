@@ -1,0 +1,98 @@
+name: Laravel Production Deploy
+
+on:
+  push:
+    branches: ["master"]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set Release Name
+      id: release
+      run: echo "RELEASE=$(date +%s)" >> $GITHUB_ENV
+
+    # -------------------------
+    # Build
+    # -------------------------
+
+    - name: Install Composer Dependencies
+      run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+
+    - name: Install Node Dependencies
+      run: npm ci
+
+    - name: Build Assets
+      run: npm run build
+
+    # -------------------------
+    # Create Release Folder
+    # -------------------------
+
+    - name: Create Release Directory
+      run: |
+        mkdir -p /usr/share/nginx/todo-prod/releases/$RELEASE
+
+    - name: Copy Files to Release
+      run: |
+        rsync -av --exclude=".git" ./ /usr/share/nginx/todo-prod/releases/$RELEASE
+
+    # -------------------------
+    # Shared Files
+    # -------------------------
+
+    - name: Link Storage
+      run: |
+        ln -nfs /usr/share/nginx/todo-prod/shared/storage /usr/share/nginx/todo-prod/releases/$RELEASE/storage
+
+    - name: Link .env
+      run: |
+        ln -nfs /usr/share/nginx/todo-prod/shared/.env /usr/share/nginx/todo-prod/releases/$RELEASE/.env
+
+    # -------------------------
+    # Laravel Setup
+    # -------------------------
+
+    - name: Run Migration
+      run: |
+        cd /usr/share/nginx/todo-prod/releases/$RELEASE
+        php artisan migrate --force
+
+    - name: Optimize Laravel
+      run: |
+        cd /usr/share/nginx/todo-prod/releases/$RELEASE
+        php artisan config:cache
+        php artisan route:cache
+        php artisan view:cache
+
+    # -------------------------
+    # Switch Release
+    # -------------------------
+
+    - name: Activate New Release
+      run: |
+        ln -nfs /usr/share/nginx/todo-prod/releases/$RELEASE /usr/share/nginx/todo-prod/current
+
+    # -------------------------
+    # Restart Services
+    # -------------------------
+
+    - name: Restart Queue
+      run: |
+        cd /usr/share/nginx/todo-prod/current
+        php artisan queue:restart || true
+
+    - name: Reload FrankenPHP
+      run: sudo systemctl reload frankenphp
+
+    # -------------------------
+    # Cleanup Old Releases
+    # -------------------------
+
+    - name: Cleanup Old Releases
+      run: |
+        ls -dt /usr/share/nginx/todo-prod/releases/* | tail -n +6 | xargs rm -rf
