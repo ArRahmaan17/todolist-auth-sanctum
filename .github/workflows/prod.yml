@@ -87,7 +87,7 @@ jobs:
         php artisan queue:restart || true
 
     - name: Reload FrankenPHP
-      run: sudo systemctl reload frankenphp
+      run: sudo systemctl restart frankenphp
 
     # -------------------------
     # Cleanup Old Releases
