@@ -21,9 +21,6 @@ jobs:
         extensions: mbstring, dom, curl, libxml, mysql, sqlite, bcmath, zip
         coverage: none
 
-    # ----------------------------
-    # Composer Cache
-    # ----------------------------
     - name: Get Composer Cache Directory
       id: composer-cache
       run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
@@ -36,15 +33,9 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-composer-
 
-    # ----------------------------
-    # Install Composer
-    # ----------------------------
     - name: Install Composer Dependencies
       run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-    # ----------------------------
-    # Node Cache
-    # ----------------------------
     - name: Cache NPM
       uses: actions/cache@v4
       with:
@@ -53,18 +44,12 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-npm-
 
-    # ----------------------------
-    # Install Node Modules
-    # ----------------------------
     - name: Install NPM Dependencies
       run: npm ci
 
     - name: Compile Assets
       run: npm run build
 
-    # ----------------------------
-    # Laravel Setup
-    # ----------------------------
     - name: Copy .env
       run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
@@ -74,9 +59,6 @@ jobs:
     - name: Set Directory Permissions
       run: chmod -R 775 storage bootstrap/cache
 
-    # ----------------------------
-    # SQLite for Testing
-    # ----------------------------
     - name: Create SQLite Database
       run: |
         mkdir -p database
@@ -88,23 +70,14 @@ jobs:
         DB_DATABASE: database/database.sqlite
       run: php artisan migrate --force
 
-    # ----------------------------
-    # Swagger Docs (optional)
-    # ----------------------------
     - name: Generate Swagger Docs
       run: php artisan l5-swagger:generate
 
-    # ----------------------------
-    # Run Tests
-    # ----------------------------
     - name: Run Tests
       env:
         DB_CONNECTION: sqlite
         DB_DATABASE: database/database.sqlite
       run: php artisan test
 
-    # ----------------------------
-    # Code Style Check
-    # ----------------------------
     - name: Check Code Styling (Pint)
       run: vendor/bin/pint --test
