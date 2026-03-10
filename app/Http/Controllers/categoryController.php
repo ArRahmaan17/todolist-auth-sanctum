@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use Facade\FlareClient\Http\Response;
 use Illuminate\Http\Request;
 
 class categoryController extends Controller
@@ -16,12 +15,13 @@ class categoryController extends Controller
     public function index()
     {
         $data = json_encode(Category::getAllCategories());
-        if ($data == "[]") {
+        if ($data == '[]') {
             $response = [
                 'status' => 'failed',
                 'message' => 'categories is empty',
                 'data' => null,
             ];
+
             return Response()->json($response, 404);
         }
         $response = [
@@ -29,6 +29,7 @@ class categoryController extends Controller
             'message' => 'categories found successfully',
             'data' => json_decode(json_encode($data)),
         ];
+
         return Response()->json($response, 200);
     }
 
@@ -45,7 +46,6 @@ class categoryController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -78,7 +78,6 @@ class categoryController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */

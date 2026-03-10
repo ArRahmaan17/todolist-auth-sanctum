@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\lists as ModelsLists;
 use Illuminate\Http\Request;
 
 class Lists extends Controller
@@ -10,6 +9,7 @@ class Lists extends Controller
     public function index()
     {
         $todos = auth()->user()->todos()->latest()->get();
+
         return view('welcome', compact('todos'));
     }
 
@@ -28,9 +28,9 @@ class Lists extends Controller
     public function update(Request $request, $id)
     {
         $todo = auth()->user()->todos()->findOrFail($id);
-        
+
         $request->validate(['name' => 'required']);
-        
+
         $todo->update([
             'name' => $request->name,
             'is_done' => $request->has('is_done') ? $request->is_done : $todo->is_done,
@@ -38,17 +38,17 @@ class Lists extends Controller
 
         return redirect()->route('lists')->with('success', 'Task updated successfully!');
     }
-    
+
     public function toggle($id)
     {
         $todo = auth()->user()->todos()->findOrFail($id);
-        $todo->update(['is_done' => !$todo->is_done]);
+        $todo->update(['is_done' => ! $todo->is_done]);
 
         if (request()->wantsJson()) {
             return response()->json([
                 'success' => true,
                 'is_done' => $todo->is_done,
-                'message' => 'Status updated'
+                'message' => 'Status updated',
             ]);
         }
 

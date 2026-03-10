@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Library;
-use Facade\FlareClient\Http\Response;
 use Illuminate\Http\Request;
 
 class LibraryController extends Controller
@@ -16,7 +15,8 @@ class LibraryController extends Controller
     public function index()
     {
         $libraries = Library::getAllLibraries();
-        $title = "Awesome Library";
+        $title = 'Awesome Library';
+
         return view('library/index', compact('libraries', 'title'));
     }
 
@@ -27,14 +27,14 @@ class LibraryController extends Controller
      */
     public function create()
     {
-        $title = "Awesome Library";
+        $title = 'Awesome Library';
+
         return view('library/add', compact('title'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -67,7 +67,6 @@ class LibraryController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */

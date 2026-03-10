@@ -15,13 +15,17 @@ class AuthController extends Controller
      *     path="/api/login",
      *     summary="Sign in",
      *     tags={"Authentication"},
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="email", type="string", format="email", example="user@example.com"),
      *             @OA\Property(property="password", type="string", format="password", example="Secret123")
      *         )
      *     ),
+     *
      *     @OA\Response(response=200, description="Login successful"),
      *     @OA\Response(response=401, description="Invalid credentials")
      * )
@@ -46,14 +50,18 @@ class AuthController extends Controller
      *     path="/api/registration",
      *     summary="Register a new user",
      *     tags={"Authentication"},
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="name", type="string", example="User Name"),
      *             @OA\Property(property="email", type="string", format="email", example="user@example.com"),
      *             @OA\Property(property="password", type="string", format="password", example="Secret123")
      *         )
      *     ),
+     *
      *     @OA\Response(response=200, description="Registration successful"),
      *     @OA\Response(response=401, description="Registration failed")
      * )
@@ -78,6 +86,7 @@ class AuthController extends Controller
      *     summary="Sign out",
      *     tags={"Authentication"},
      *     security={{"bearerAuth":{}}},
+     *
      *     @OA\Response(response=200, description="Logout successful"),
      *     @OA\Response(response=501, description="Logout failed")
      * )

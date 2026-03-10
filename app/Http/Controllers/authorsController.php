@@ -15,12 +15,13 @@ class authorsController extends Controller
     public function index()
     {
         $authors = json_encode(Authors::getAllAuthors());
-        if ($authors == "[]") {
+        if ($authors == '[]') {
             $response = [
                 'status' => 'failed',
                 'message' => 'authors is empty',
                 'data' => null,
             ];
+
             return Response()->json($response, 404);
         }
         $response = [
@@ -28,6 +29,7 @@ class authorsController extends Controller
             'message' => 'authors found successfully',
             'data' => json_decode(json_encode($authors)),
         ];
+
         return Response()->json($response, 200);
         //
     }
@@ -45,7 +47,6 @@ class authorsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -78,7 +79,6 @@ class authorsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */

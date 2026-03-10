@@ -15,12 +15,13 @@ class booksController extends Controller
     public function index()
     {
         $books = json_encode(Books::getAllBooks());
-        if ($books == "[]") {
+        if ($books == '[]') {
             $response = [
                 'status' => 'failed',
                 'message' => 'books is empty',
                 'data' => null,
             ];
+
             return Response()->json($response, 404);
         }
         $response = [
@@ -28,6 +29,7 @@ class booksController extends Controller
             'message' => 'books found successfully',
             'data' => json_decode(json_encode($books)),
         ];
+
         return Response()->json($response, 200);
     }
 
@@ -44,7 +46,6 @@ class booksController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -77,7 +78,6 @@ class booksController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */

@@ -13,6 +13,7 @@ use Illuminate\Routing\Controller as BaseController;
  *     version="1.0.0",
  *     description="API documentation for the TodoList application with authentication."
  * )
+ *
  * @OA\SecurityScheme(
  *     securityScheme="bearerAuth",
  *     type="http",

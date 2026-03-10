@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\ListTodo;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Validator;
 
 class TodoController extends Controller
 {
@@ -16,6 +15,7 @@ class TodoController extends Controller
      *     summary="Get all todos",
      *     tags={"Todos"},
      *     security={{"bearerAuth":{}}},
+     *
      *     @OA\Response(response=200, description="List of todos"),
      *     @OA\Response(response=401, description="Unauthorized")
      * )
@@ -30,7 +30,7 @@ class TodoController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Todos retrieved successfully',
-            'data' => $todos
+            'data' => $todos,
         ]);
     }
 
@@ -40,12 +40,16 @@ class TodoController extends Controller
      *     summary="Create a new todo",
      *     tags={"Todos"},
      *     security={{"bearerAuth":{}}},
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="name", type="string", example="Buy groceries")
      *         )
      *     ),
+     *
      *     @OA\Response(response=201, description="Todo created successfully"),
      *     @OA\Response(response=422, description="Validation error")
      * )
@@ -60,13 +64,13 @@ class TodoController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Validation error',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         $todo = $request->user()->todos()->create([
             'name' => $request->name,
-            'is_done' => false
+            'is_done' => false,
         ]);
 
         Cache::forget("todos_user_{$request->user()->id}");
@@ -74,7 +78,7 @@ class TodoController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Todo created successfully',
-            'data' => $todo
+            'data' => $todo,
         ], 201);
     }
 
@@ -84,12 +88,15 @@ class TodoController extends Controller
      *     summary="Get a specific todo",
      *     tags={"Todos"},
      *     security={{"bearerAuth":{}}},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
+     *
      *         @OA\Schema(type="integer")
      *     ),
+     *
      *     @OA\Response(response=200, description="Todo details"),
      *     @OA\Response(response=404, description="Todo not found")
      * )
@@ -98,17 +105,17 @@ class TodoController extends Controller
     {
         $todo = $request->user()->todos()->find($id);
 
-        if (!$todo) {
+        if (! $todo) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Todo not found'
+                'message' => 'Todo not found',
             ], 404);
         }
 
         return response()->json([
             'status' => 'success',
             'message' => 'Todo retrieved successfully',
-            'data' => $todo
+            'data' => $todo,
         ]);
     }
 
@@ -118,19 +125,25 @@ class TodoController extends Controller
      *     summary="Update a todo",
      *     tags={"Todos"},
      *     security={{"bearerAuth":{}}},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
+     *
      *         @OA\Schema(type="integer")
      *     ),
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="name", type="string", example="Updated todo name"),
      *             @OA\Property(property="is_done", type="boolean", example=true)
      *         )
      *     ),
+     *
      *     @OA\Response(response=200, description="Todo updated successfully"),
      *     @OA\Response(response=404, description="Todo not found")
      * )
@@ -139,23 +152,23 @@ class TodoController extends Controller
     {
         $todo = $request->user()->todos()->find($id);
 
-        if (!$todo) {
+        if (! $todo) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Todo not found'
+                'message' => 'Todo not found',
             ], 404);
         }
 
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|required|string|max:255',
-            'is_done' => 'sometimes|required|boolean'
+            'is_done' => 'sometimes|required|boolean',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Validation error',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -166,7 +179,7 @@ class TodoController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Todo updated successfully',
-            'data' => $todo
+            'data' => $todo,
         ]);
     }
 
@@ -176,12 +189,15 @@ class TodoController extends Controller
      *     summary="Delete a todo",
      *     tags={"Todos"},
      *     security={{"bearerAuth":{}}},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
+     *
      *         @OA\Schema(type="integer")
      *     ),
+     *
      *     @OA\Response(response=200, description="Todo deleted successfully"),
      *     @OA\Response(response=404, description="Todo not found")
      * )
@@ -190,10 +206,10 @@ class TodoController extends Controller
     {
         $todo = $request->user()->todos()->find($id);
 
-        if (!$todo) {
+        if (! $todo) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Todo not found'
+                'message' => 'Todo not found',
             ], 404);
         }
 
@@ -203,7 +219,7 @@ class TodoController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Todo deleted successfully'
+            'message' => 'Todo deleted successfully',
         ]);
     }
 }

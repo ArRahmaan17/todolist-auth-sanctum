@@ -47,6 +47,7 @@ class UserController extends Controller
     public function register()
     {
         $title = 'Register Page';
+
         return view('auth.register', compact('title'));
     }
 

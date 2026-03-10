@@ -17,25 +17,27 @@ class AuthorController extends Controller
     public function index()
     {
         $authorsData = Authors::getAllAuthors();
-        if (json_encode($authorsData) === "[]") {
+        if (json_encode($authorsData) === '[]') {
             $response = [
                 'status' => false,
-                'message' => "we failed to found the authors",
-                'data' => null
+                'message' => 'we failed to found the authors',
+                'data' => null,
             ];
+
             return Response()->json($response, 404);
         }
         $response = [
             'status' => true,
-            'message' => "we successfully found the authors",
-            'data' => $authorsData
+            'message' => 'we successfully found the authors',
+            'data' => $authorsData,
         ];
+
         return Response()->json($response, 200);
     }
 
     /**
      * filtering the author.
-     * @param  \Illuminate\Http\Request  $request
+     *
      * @return \Illuminate\Http\Response
      */
     public function filter(Request $request)
@@ -51,11 +53,13 @@ class AuthorController extends Controller
      */
     public function store(AuthorRequest $request)
     {
-        if (!Authors::createAuthors($request->authorsAccount())) {
+        if (! Authors::createAuthors($request->authorsAccount())) {
             $response = ['status' => false, 'message' => 'we failed to create the author'];
+
             return Response()->json($response, 401);
         }
         $response = ['status' => true, 'message' => 'we successfully create the author'];
+
         return Response()->json($response, 200);
     }
 
@@ -70,9 +74,11 @@ class AuthorController extends Controller
         $dataAuthor = Authors::showSpecifiedAuthors($id);
         if ($dataAuthor == null) {
             $response = ['status' => false, 'message' => 'we failed to find the author', 'data' => null];
+
             return Response()->json($response, 401);
         }
         $response = ['status' => true, 'message' => 'we successfully find the author', 'data' => $dataAuthor];
+
         return Response()->json($response, 200);
     }
 
@@ -85,11 +91,13 @@ class AuthorController extends Controller
      */
     public function update(AuthorRequest $request, $id)
     {
-        if (!Authors::updateAuthors($request->authorsAccount(), $id)) {
+        if (! Authors::updateAuthors($request->authorsAccount(), $id)) {
             $response = ['status' => false, 'message' => 'we failed to update the author'];
+
             return Response()->json($response, 401);
         }
         $response = ['status' => true, 'message' => 'we successfully to update the author'];
+
         return Response()->json($response, 200);
     }
 
@@ -101,11 +109,13 @@ class AuthorController extends Controller
      */
     public function destroy($id)
     {
-        if (!Authors::deleteAuthors($id)) {
+        if (! Authors::deleteAuthors($id)) {
             $response = ['status' => false, 'message' => 'we failed to delete the author'];
+
             return Response()->json($response, 401);
         }
         $response = ['status' => true, 'message' => 'we successfully to delete the author'];
+
         return Response()->json($response, 200);
     }
 }
