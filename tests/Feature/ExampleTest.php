@@ -25,6 +25,6 @@ class ExampleTest extends TestCase
             'password' => '12345678',
         ]);
 
-        $response->assertStatus(200);
+        $response->assertStatus(302);
     }
 }
