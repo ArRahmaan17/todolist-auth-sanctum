@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -59,9 +61,9 @@ class UserController extends Controller
             'password' => 'required|min:5|confirmed',
         ]);
 
-        $validated['password'] = \Illuminate\Support\Facades\Hash::make($validated['password']);
+        $validated['password'] = Hash::make($validated['password']);
 
-        $user = \App\Models\User::create($validated);
+        $user = User::create($validated);
 
         Auth::login($user);
 
