@@ -38,7 +38,6 @@ jobs:
     - name: Create Release Directory
       run: |
         mkdir -p /usr/share/nginx/todo-prod/releases/$RELEASE
-
     - name: Copy Files to Release
       run: |
         rsync -av --exclude=".git" ./ /usr/share/nginx/todo-prod/releases/$RELEASE
