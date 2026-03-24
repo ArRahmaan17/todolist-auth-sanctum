@@ -5,6 +5,12 @@
         "description": "API documentation for the TodoList application with authentication.",
         "version": "1.0.0"
     },
+    "servers": [
+        {
+            "url": "https://localhost/api",
+            "description": "Local Development Server (HTTPS)"
+        }
+    ],
     "paths": {
         "/api/login": {
             "post": {
@@ -287,6 +293,12 @@
                 "type": "http",
                 "bearerFormat": "JWT",
                 "scheme": "bearer"
+            },
+            "sanctum": {
+                "type": "apiKey",
+                "description": "Enter token in format (Bearer <token>)",
+                "name": "Authorization",
+                "in": "header"
             }
         }
     },
