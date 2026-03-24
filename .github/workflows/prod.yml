@@ -48,7 +48,7 @@ jobs:
 
     - name: Link Storage
       run: |
-        ln -nfs /usr/share/nginx/todo-prod/shared/storage /usr/share/nginx/todo-prod/releases/$RELEASE
+        ln -nfs /usr/share/nginx/todo-prod/shared/storage /usr/share/nginx/todo-prod/releases/$RELEASE/storage/*
 
     - name: Link .env
       run: |
