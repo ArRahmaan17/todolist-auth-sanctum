@@ -16,7 +16,7 @@ use Illuminate\Routing\Controller as BaseController;
  *
  * @OA\SecurityScheme(
  *     securityScheme="bearerAuth",
- *     type="https",
+ *     type="http",
  *     scheme="bearer",
  *     bearerFormat="JWT"
  * )
