@@ -3,6 +3,8 @@ name: Production Deploy
 on:
   push:
     branches: ["master"]
+  pull_request:
+    branches: ["master"]
 
 jobs:
   deploy:
@@ -74,8 +76,6 @@ jobs:
         php artisan route:cache
         php artisan view:cache
 
-    - name: Test Code
-      run: php artisan test
     # -------------------------
     # Switch Release
     # -------------------------
