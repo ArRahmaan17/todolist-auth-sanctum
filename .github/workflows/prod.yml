@@ -1,8 +1,6 @@
 name: Production Deploy
 
 on:
-  push:
-    branches: ["master"]
   pull_request:
     branches: ["master"]
 
@@ -38,7 +36,6 @@ jobs:
     - name: Create Release Directory
       run: |
         mkdir -p /usr/share/nginx/todo-prod/releases/$RELEASE
-
     - name: Copy Files to Release
       run: |
         rsync -av --exclude=".git" ./ /usr/share/nginx/todo-prod/releases/$RELEASE
@@ -49,7 +46,7 @@ jobs:
 
     - name: Link Storage
       run: |
-        ln -nfs /usr/share/nginx/todo-prod/shared/storage /usr/share/nginx/todo-prod/releases/$RELEASE/storage
+        ln -nfs /usr/share/nginx/todo-prod/shared/storage /usr/share/nginx/todo-prod/releases/$RELEASE/storage/*
 
     - name: Link .env
       run: |
@@ -97,9 +94,10 @@ jobs:
       run: sudo systemctl restart frankenphp
 
     # -------------------------
-    # Cleanup Old Releases
+    # Remove old release symlink and Cleanup Old Releases 
     # -------------------------
 
     - name: Cleanup Old Releases
       run: |
-        ls -dt /usr/share/nginx/todo-prod/releases/* | tail -n +6 | xargs rm -rf
+        ls -dt /usr/share/nginx/todo-prod/releases/* | tail -n +6 | xargs unlink storage .env
+        ls -dt /usr/share/nginx/todo-prod/releases/* | grep -v "current" | grep -v "shared" | tail -n +6 | xargs rm -rf

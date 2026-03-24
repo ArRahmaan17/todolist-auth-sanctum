@@ -32,7 +32,7 @@ class AuthController extends Controller
      */
     public function authentication(LoginRequest $request)
     {
-        $credentials = ['email' => $request->email, 'password' => $request->password];
+        $credentials = $request->only(['email', 'password']);
         $user = User::whereEmail($credentials['email'])->first();
         if (! $credentials || ! Hash::check($credentials['password'], $user->password)) {
             $responses = ['status' => false, 'message' => "your credentials doesn't match to our records"];
