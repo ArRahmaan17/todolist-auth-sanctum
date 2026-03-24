@@ -100,6 +100,5 @@ jobs:
     - name: Cleanup Old Releases
       run: |
         for dir in $(ls -dt /usr/share/nginx/todo-prod/releases/* | grep -v "current" | grep -v "shared" | tail -n +6); do
-          rm -f "$dir/storage" "$dir/.env"
           rm -rf "$dir"
         done
