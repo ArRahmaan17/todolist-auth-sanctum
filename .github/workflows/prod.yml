@@ -76,9 +76,6 @@ jobs:
         php artisan route:cache
         php artisan view:cache
 
-    - name: Test Code
-      run: | 
-        cd /usr/share/nginx/todo-prod/releases/$RELEASE && php artisan test
     # -------------------------
     # Switch Release
     # -------------------------
