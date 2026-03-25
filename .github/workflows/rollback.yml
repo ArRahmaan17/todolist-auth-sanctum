@@ -1,0 +1,37 @@
+name: Production Rollback
+
+on:
+  workflow_dispatch:
+
+env:
+  RELEASE_DIR: "${{ secrets.PROD_PATH }}"
+  RELEASE_PATH: "${{ secrets.PROD_PATH }}/releases"
+
+jobs:
+  rollback:
+    runs-on: self-hosted
+    steps:
+      - name: Revert Symlink
+        run: |
+          # Get the list of releases, newest first
+          # [1] is current, [2] is the previous one
+          PREVIOUS_RELEASE=$(ls -dt ${{ env.RELEASE_PATH }}/*/ | sed -n '2p')
+
+          if [ -z "$PREVIOUS_RELEASE" ]; then
+            echo "❌ No previous release found to rollback to!"
+            exit 1
+          fi
+
+          echo "Rolling back to: $PREVIOUS_RELEASE"
+          ln -nfs $PREVIOUS_RELEASE ${{ env.RELEASE_DIR }}/current
+
+      - name: Restart Services
+        run: |
+          cd ${{ env.RELEASE_DIR }}/current
+          php artisan queue:restart || true
+          sudo systemctl restart frankenphp
+
+      - name: Rollback Summary
+        run: |
+          ACTIVE=$(readlink -f ${{ env.RELEASE_DIR }}/current | xargs basename)
+          echo "✅ Rollback successful. Active release is now: $ACTIVE"
