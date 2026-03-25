@@ -2,6 +2,7 @@ name: Production Deploy
 
 on:
   pull_request:
+    types: [closed]
     branches: ["prod"]
 
 env:
@@ -11,6 +12,8 @@ env:
 
 jobs:
   deploy:
+    # Ensuring it only runs if the PR was actually merged
+    if: github.event.pull_request.merged == true
     runs-on: self-hosted
     timeout-minutes: 30
 
@@ -18,24 +21,24 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set Release Name
+      - name: Set Release ID
         run: echo "RELEASE=$(date +%s)" >> $GITHUB_ENV
 
-      # -------------------------
-      # Build
-      # -------------------------
+      # -------------------------------------------------------
+      # 1. Production Build (PHP & JS)
+      # -------------------------------------------------------
       - name: Install Composer Dependencies
         run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
       - name: Install Node Dependencies
         run: npm ci --prefer-offline --no-audit
 
-      - name: Build Assets
+      - name: Build Production Assets
         run: npm run build
 
-      # -------------------------
-      # Create Release Folder
-      # -------------------------
+      # -------------------------------------------------------
+      # 2. Prepare Release Folder
+      # -------------------------------------------------------
       - name: Create Release Directory
         run: mkdir -p ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}
 
@@ -44,83 +47,66 @@ jobs:
           rsync -av \
             --exclude=".git" \
             --exclude="node_modules" \
-            --exclude=".env" \
             --exclude="storage" \
             --exclude="bootstrap/cache" \
-            --exclude=".env.*.php" \
             ./ ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/
 
-      # -------------------------
-      # Shared Files Setup
-      # -------------------------
-      - name: Verify Shared Directory
+      - name: Link Shared Files & .env
         run: |
+          # Ensure shared dirs exist
           mkdir -p ${{ env.SHARED_DIR }}/{storage,bootstrap/cache}
-          [ -f "${{ env.SHARED_DIR }}/.env" ] || (echo "ERROR: Shared .env missing!" && exit 1)
-
-      - name: Link Shared Files
-        run: |
+          
+          # Link Storage
           rm -rf ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/storage
           ln -nfs ${{ env.SHARED_DIR }}/storage ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/storage
           
+          # Link Cache
           rm -rf ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/bootstrap/cache
           ln -nfs ${{ env.SHARED_DIR }}/bootstrap/cache ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/bootstrap/cache
           
-          rm -f ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/.env
+          # Link .env (Crucial: must exist in shared folder)
           ln -nfs ${{ env.SHARED_DIR }}/.env ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/.env
 
-      # -------------------------
-      # Laravel Setup
-      # -------------------------
-      - name: Generate Swagger Docs
-        run: |
-          cd ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}
-          php artisan l5-swagger:generate || true
-
-      - name: Run Migration
+      # -------------------------------------------------------
+      # 3. Laravel Production Optimizations
+      # -------------------------------------------------------
+      - name: Run Migrations & Optimize
         run: |
           cd ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}
           php artisan migrate --force
-
-      - name: Optimize Laravel
-        run: |
-          cd ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}
           php artisan config:cache
           php artisan route:cache
           php artisan view:cache
+          php artisan l5-swagger:generate || true
 
-      # -------------------------
-      # Switch Release
-      # -------------------------
+      # -------------------------------------------------------
+      # 4. Activation (The Atomic Switch)
+      # -------------------------------------------------------
       - name: Activate New Release
         run: ln -nfs ${{ env.RELEASE_PATH }}/${{ env.RELEASE }} ${{ env.RELEASE_DIR }}/current
 
-      # -------------------------
-      # Restart Services
-      # -------------------------
-      - name: Restart Queue & FrankenPHP
+      - name: Restart Services
         run: |
+          sudo systemctl restart frankenphp
           cd ${{ env.RELEASE_DIR }}/current
           php artisan queue:restart || true
-          sudo systemctl restart frankenphp
 
-      # -------------------------
-      # Cleanup Old Releases (Keep only 3)
-      # -------------------------
+      # -------------------------------------------------------
+      # 5. Cleanup Old Releases (Keep only 3)
+      # -------------------------------------------------------
       - name: Cleanup Old Releases
         run: |
-          # Get the full path of the current active release
-          CURRENT_RELEASE_PATH=$(readlink -f ${{ env.RELEASE_DIR }}/current)
+          # Find the absolute path of the current live release
+          CURRENT_LIVE=$(readlink -f ${{ env.RELEASE_DIR }}/current)
           
-          # List all directories in release path, sort by date (newest first)
-          # tail -n +4 means keep top 3, delete everything from the 4th onwards
+          # List all directories, sort by time (newest first), skip the first 3
+          # We use tail -n +4 to start from the 4th folder onwards
           ls -dt ${{ env.RELEASE_PATH }}/*/ | tail -n +4 | while read dir; do
-            # Ensure we never delete the currently active release directory
-            if [ "$(readlink -f "$dir")" != "$CURRENT_RELEASE_PATH" ]; then
-              echo "Removing old release: $dir"
+            ABS_DIR=$(readlink -f "$dir")
+            
+            # Safety Check: Don't delete if it's the current live folder or 'shared'
+            if [ "$ABS_DIR" != "$CURRENT_LIVE" ] && [[ "$dir" != *"shared"* ]]; then
+              echo "Deleting old release: $dir"
               rm -rf "$dir"
             fi
           done
-
-      - name: Deployment Summary
-        run: echo "✅ Release ${{ env.RELEASE }} is live!"
