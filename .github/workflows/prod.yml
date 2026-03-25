@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
 
       - name: Set Release Name
         id: release
@@ -29,15 +31,12 @@ jobs:
 
       - name: Install Composer Dependencies
         run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
-        working-directory: ./
 
       - name: Install Node Dependencies
         run: npm ci --prefer-offline --no-audit
-        working-directory: ./
 
       - name: Build Assets
         run: npm run build
-        working-directory: ./
 
       # -------------------------
       # Create Release Folder
@@ -58,7 +57,6 @@ jobs:
             --exclude="bootstrap/cache" \
             --exclude=".env.*.php" \
             ./ ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/
-        working-directory: ./
 
       # -------------------------
       # Shared Files Setup
@@ -132,22 +130,23 @@ jobs:
         timeout-minutes: 5
 
       # -------------------------
-      # Cleanup Old Releases (Safe Version)
+      # Cleanup Old Releases
       # -------------------------
 
       - name: Cleanup Old Releases
         run: |
           CURRENT_LINK=$(readlink -f ${{ env.RELEASE_DIR }}/current)
           CURRENT_RELEASE=$(basename "$CURRENT_LINK")
-
+          
           # Keep last 5 releases and current
-          ls -dt ${{ env.RELEASE_PATH }}/*/ | tail -n +6 | while read dir; do
+          ls -dt ${{ env.RELEASE_PATH }}/*/ 2>/dev/null | tail -n +6 | while read dir; do
             RELEASE_NAME=$(basename "$dir")
             if [ "$RELEASE_NAME" != "$CURRENT_RELEASE" ] && [ "$RELEASE_NAME" != "shared" ]; then
               echo "Removing old release: $RELEASE_NAME"
               rm -rf "$dir"
             fi
           done
+        continue-on-error: true
 
       # -------------------------
       # Deployment Summary
@@ -165,7 +164,11 @@ jobs:
         if: failure()
         run: |
           echo "❌ Deployment Failed!"
-          echo "Reverting to previous release..."
-          cd ${{ env.RELEASE_DIR }}
-          PREVIOUS=$(ls -dt releases/*/ | head -2 | tail -1)
-          ln -nfs "$PREVIOUS" current
+          echo "Attempting rollback to previous release..."
+          PREVIOUS=$(ls -dt ${{ env.RELEASE_PATH }}/*/ 2>/dev/null | head -2 | tail -1)
+          if [ -n "$PREVIOUS" ]; then
+            ln -nfs "$PREVIOUS" ${{ env.RELEASE_DIR }}/current
+            echo "Rollback completed"
+          else
+            echo "No previous release found for rollback"
+          fi
