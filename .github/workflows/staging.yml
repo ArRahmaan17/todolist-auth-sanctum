@@ -1,4 +1,4 @@
-name: Staging Runner
+name: Staging and Prod Runner
 
 on:
   pull_request:
