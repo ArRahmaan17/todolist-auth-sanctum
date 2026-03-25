@@ -2,17 +2,18 @@
 
 # Todo List App with Sanctum Authentication
 
-A modern Todo List and Library management application built with Laravel 10, featuring secure Sanctum-based API authentication and a responsive user interface.
+A modern Todo List and Library management application built with Laravel 10, featuring secure Sanctum-based API authentication and a stunning landing page.
 
 ## 🚀 Features
 
-### ✅ Authentication
+### ✅ Authentication & Security
 - **Sanctum-based API Auth**: Secure token-based authentication for API requests.
 - **Secure Login & Registration**: Full authentication flow for both Web and API.
+- **Forgot Password**: Secure password recovery system with email reset links.
 - **Protected Routes**: Middleware ensures only authenticated users can access their data.
 
 ### 📝 Todo Management
-- **Dashboard**: A clean, modern dashboard to view all your tasks.
+- **Dashboard**: A clean, modern dashboard to view all your tasks (accessible at `/dashboard`).
 - **Full CRUD Support**: Create, read, update, and delete tasks.
 - **Toggle Status**: Mark tasks as complete/incomplete instantly.
 - **Data Isolation**: Users only see and manage their own tasks.
@@ -22,9 +23,10 @@ A modern Todo List and Library management application built with Laravel 10, fea
 - **Books & Authors**: Organize books with dedicated categories and author management.
 
 ### 🎨 Modern UI/UX
+- **Stunning Home Page**: A powerful, minimalist landing page with smooth animations and mesh gradients.
 - **Tailwind CSS**: Built with modern Tailwind for rapid UI development.
 - **Responsive Design**: Optimized for both desktop and mobile.
-- **Interactive Elements**: Smooth transitions and instant feedback.
+- **Interactive Elements**: Glassmorphism, hover effects, and instant user feedback.
 
 ### 📖 API Documentation
 - **Swagger Integration**: Interactive API documentation available at `/api/documentation`.
@@ -33,8 +35,7 @@ A modern Todo List and Library management application built with Laravel 10, fea
 
 - **Framework**: Laravel 10.x
 - **Authentication**: Laravel Sanctum
-- **Frontend**: Blade Templates
-- **Styling**: Tailwind CSS
+- **Frontend**: Blade Templates & Tailwind CSS
 - **Bundler**: Vite
 - **Database**: MySQL
 - **API Docs**: L5-Swagger
