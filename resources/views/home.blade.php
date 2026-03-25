@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" class="h-full scroll-smooth">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,12 +13,13 @@
     <style>
         .mesh-gradient {
             background-color: #0f172a;
-            background-image: 
+            background-image:
                 radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.15) 0px, transparent 50%),
                 radial-gradient(at 100% 0%, rgba(147, 51, 234, 0.15) 0px, transparent 50%),
                 radial-gradient(at 100% 100%, rgba(79, 70, 229, 0.1) 0px, transparent 50%),
                 radial-gradient(at 0% 100%, rgba(147, 51, 234, 0.1) 0px, transparent 50%);
         }
+
         .hero-glow {
             filter: blur(120px);
             background: linear-gradient(to right, #4f46e5, #9333ea);
@@ -25,8 +27,9 @@
         }
     </style>
 </head>
+
 <body class="min-h-full antialiased text-slate-400 mesh-gradient selection:bg-indigo-500/30 selection:text-indigo-200 overflow-x-hidden">
-    
+
     <!-- Navigation -->
     <nav class="fixed top-0 w-full z-50 backdrop-blur-md border-b border-white/5">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
@@ -41,14 +44,14 @@
 
             <div class="flex items-center gap-6">
                 @auth
-                    <a href="{{ route('lists') }}" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Dashboard</a>
-                    <form action="{{ route('logout') }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit" class="h-10 px-5 rounded-full bg-white/5 border border-white/10 text-sm font-medium text-white hover:bg-white/10 transition-all active:scale-95">Sign Out</button>
-                    </form>
+                <a href="{{ route('lists') }}" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Dashboard</a>
+                <form action="{{ route('logout') }}" method="POST" class="inline">
+                    @csrf
+                    <button type="submit" class="h-10 px-5 rounded-full bg-white/5 border border-white/10 text-sm font-medium text-white hover:bg-white/10 transition-all active:scale-95">Sign Out</button>
+                </form>
                 @else
-                    <a href="{{ route('login') }}" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Sign In</a>
-                    <a href="{{ route('register') }}" class="h-10 px-5 flex items-center rounded-full bg-indigo-600 text-sm font-semibold text-white hover:bg-indigo-500 shadow-lg shadow-indigo-600/20 transition-all active:scale-95">Get Started</a>
+                <a href="{{ route('login') }}" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Sign In</a>
+                <a href="{{ route('register') }}" class="h-10 px-5 flex items-center rounded-full bg-indigo-600 text-sm font-semibold text-white hover:bg-indigo-500 shadow-lg shadow-indigo-600/20 transition-all active:scale-95">Get Started</a>
                 @endauth
             </div>
         </div>
@@ -60,37 +63,37 @@
 
         <div class="max-w-7xl mx-auto px-6 relative z-10">
             <div class="max-w-3xl mx-auto text-center space-y-8">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-xs font-semibold text-indigo-400 tracking-wider uppercase animate-in fade-in slide-in-from-bottom-2 duration-700">
+                <div class="inline-flex items-center gap-2 p-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-xs font-semibold text-indigo-400 tracking-wider uppercase animate-in fade-in slide-in-from-bottom-2 duration-700">
                     <span class="flex h-2 w-2 rounded-full bg-indigo-500 animate-pulse"></span>
                     Master Your Workflow
                 </div>
-                
+
                 <h1 class="text-6xl md:text-7xl font-extrabold tracking-tight text-white animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-100">
                     Organize your life in <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">one simple place.</span>
                 </h1>
-                
+
                 <p class="text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-200">
                     Minimalist, powerful, and secure. Stay on top of your tasks with our modern productivity suite designed for clarity and focus.
                 </p>
 
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-300">
                     @auth
-                        <a href="{{ route('lists') }}" class="h-14 px-8 flex items-center rounded-2xl bg-indigo-600 text-lg font-bold text-white hover:bg-indigo-500 shadow-2xl shadow-indigo-600/30 transition-all active:scale-95 group">
-                            Go to Dashboard
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                            </svg>
-                        </a>
+                    <a href="{{ route('lists') }}" class="h-14 px-8 flex items-center rounded-2xl bg-indigo-600 text-lg font-bold text-white hover:bg-indigo-500 shadow-2xl shadow-indigo-600/30 transition-all active:scale-95 group">
+                        Go to Dashboard
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                    </a>
                     @else
-                        <a href="{{ route('register') }}" class="h-14 px-8 flex items-center rounded-2xl bg-indigo-600 text-lg font-bold text-white hover:bg-indigo-500 shadow-2xl shadow-indigo-600/30 transition-all active:scale-95 group">
-                            Start Tracking Free
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                            </svg>
-                        </a>
-                        <a href="#features" class="h-14 px-8 flex items-center rounded-2xl bg-white/5 border border-white/10 text-lg font-bold text-white hover:bg-white/10 transition-all active:scale-95">
-                            Learn More
-                        </a>
+                    <a href="{{ route('register') }}" class="h-14 px-8 flex items-center rounded-2xl bg-indigo-600 text-lg font-bold text-white hover:bg-indigo-500 shadow-2xl shadow-indigo-600/30 transition-all active:scale-95 group">
+                        Start Tracking Free
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                    </a>
+                    <a href="#features" class="h-14 px-8 flex items-center rounded-2xl bg-white/5 border border-white/10 text-lg font-bold text-white hover:bg-white/10 transition-all active:scale-95">
+                        Learn More
+                    </a>
                     @endauth
                 </div>
             </div>
@@ -178,10 +181,11 @@
             <div class="flex items-center gap-6">
                 <a href="/api/documentation" target="_blank" class="text-sm text-slate-500 hover:text-indigo-400 transition-colors">API Docs</a>
                 <a href="#" class="text-sm text-slate-500 hover:text-indigo-400 transition-colors">Privacy</a>
-                <a href="#" class="text-sm text-slate-500 hover:text-indigo-400 transition-colors">Github</a>
+                <a href="https://github.com/ArRahmaan17/todolist-auth-sanctum" target="_blank" class="text-sm text-slate-500 hover:text-indigo-400 transition-colors">Github</a>
             </div>
         </div>
     </footer>
 
 </body>
+
 </html>
