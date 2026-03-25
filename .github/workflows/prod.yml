@@ -8,6 +8,7 @@ env:
   RELEASE_DIR: "${{ secrets.PROD_PATH }}"
   SHARED_DIR: "${{ secrets.PROD_PATH }}/shared"
   RELEASE_PATH: "${{ secrets.PROD_PATH }}/releases"
+  RELEASE: $(date +%s)
 
 jobs:
   deploy:
@@ -20,10 +21,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.merge_commit_sha }}
-
-      - name: Set Release Name
-        id: release
-        run: echo "RELEASE=$(date +%s)" >> $GITHUB_ENV
 
       # -------------------------
       # Build
