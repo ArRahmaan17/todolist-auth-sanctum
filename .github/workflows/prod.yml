@@ -8,24 +8,22 @@ env:
   RELEASE_DIR: "${{ secrets.PROD_PATH }}"
   SHARED_DIR: "${{ secrets.PROD_PATH }}/shared"
   RELEASE_PATH: "${{ secrets.PROD_PATH }}/releases"
-  RELEASE: $(date +%s)
 
 jobs:
   deploy:
-    if: github.event.pull_request.merged == true
     runs-on: self-hosted
     timeout-minutes: 30
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.merge_commit_sha }}
+
+      - name: Set Release Name
+        run: echo "RELEASE=$(date +%s)" >> $GITHUB_ENV
 
       # -------------------------
       # Build
       # -------------------------
-
       - name: Install Composer Dependencies
         run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
@@ -38,11 +36,8 @@ jobs:
       # -------------------------
       # Create Release Folder
       # -------------------------
-
       - name: Create Release Directory
-        run: |
-          mkdir -p ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}
-          echo "Release directory created at: ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}"
+        run: mkdir -p ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}
 
       - name: Copy Files to Release
         run: |
@@ -58,39 +53,29 @@ jobs:
       # -------------------------
       # Shared Files Setup
       # -------------------------
-
       - name: Verify Shared Directory
         run: |
           mkdir -p ${{ env.SHARED_DIR }}/{storage,bootstrap/cache}
-          if [ ! -f "${{ env.SHARED_DIR }}/.env" ]; then
-            echo "ERROR: Shared .env file not found!"
-            exit 1
-          fi
+          [ -f "${{ env.SHARED_DIR }}/.env" ] || (echo "ERROR: Shared .env missing!" && exit 1)
 
-      - name: Link Storage
+      - name: Link Shared Files
         run: |
           rm -rf ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/storage
           ln -nfs ${{ env.SHARED_DIR }}/storage ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/storage
-
-      - name: Link Bootstrap Cache
-        run: |
+          
           rm -rf ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/bootstrap/cache
           ln -nfs ${{ env.SHARED_DIR }}/bootstrap/cache ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/bootstrap/cache
-
-      - name: Link .env
-        run: |
+          
           rm -f ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/.env
           ln -nfs ${{ env.SHARED_DIR }}/.env ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/.env
 
       # -------------------------
       # Laravel Setup
       # -------------------------
-
       - name: Generate Swagger Docs
         run: |
           cd ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}
-          php artisan l5-swagger:generate
-        continue-on-error: true
+          php artisan l5-swagger:generate || true
 
       - name: Run Migration
         run: |
@@ -105,67 +90,37 @@ jobs:
           php artisan view:cache
 
       # -------------------------
-      # Switch Release (Atomic)
+      # Switch Release
       # -------------------------
-
       - name: Activate New Release
-        run: |
-          ln -nfs ${{ env.RELEASE_PATH }}/${{ env.RELEASE }} ${{ env.RELEASE_DIR }}/current
-          echo "Release activated: ${{ env.RELEASE }}"
+        run: ln -nfs ${{ env.RELEASE_PATH }}/${{ env.RELEASE }} ${{ env.RELEASE_DIR }}/current
 
       # -------------------------
       # Restart Services
       # -------------------------
-
-      - name: Restart Queue
+      - name: Restart Queue & FrankenPHP
         run: |
           cd ${{ env.RELEASE_DIR }}/current
           php artisan queue:restart || true
-
-      - name: Reload FrankenPHP
-        run: sudo systemctl restart frankenphp
-        timeout-minutes: 5
+          sudo systemctl restart frankenphp
 
       # -------------------------
-      # Cleanup Old Releases
+      # Cleanup Old Releases (Keep only 3)
       # -------------------------
-
       - name: Cleanup Old Releases
         run: |
-          CURRENT_LINK=$(readlink -f ${{ env.RELEASE_DIR }}/current)
-          CURRENT_RELEASE=$(basename "$CURRENT_LINK")
+          # Get the full path of the current active release
+          CURRENT_RELEASE_PATH=$(readlink -f ${{ env.RELEASE_DIR }}/current)
           
-          # Keep last 5 releases and current
-          ls -dt ${{ env.RELEASE_PATH }}/*/ 2>/dev/null | tail -n +6 | while read dir; do
-            RELEASE_NAME=$(basename "$dir")
-            if [ "$RELEASE_NAME" != "$CURRENT_RELEASE" ] && [ "$RELEASE_NAME" != "shared" ]; then
-              echo "Removing old release: $RELEASE_NAME"
+          # List all directories in release path, sort by date (newest first)
+          # tail -n +4 means keep top 3, delete everything from the 4th onwards
+          ls -dt ${{ env.RELEASE_PATH }}/*/ | tail -n +4 | while read dir; do
+            # Ensure we never delete the currently active release directory
+            if [ "$(readlink -f "$dir")" != "$CURRENT_RELEASE_PATH" ]; then
+              echo "Removing old release: $dir"
               rm -rf "$dir"
             fi
           done
-        continue-on-error: true
-
-      # -------------------------
-      # Deployment Summary
-      # -------------------------
 
       - name: Deployment Summary
-        if: success()
-        run: |
-          echo "✅ Deployment Successful!"
-          echo "Release: ${{ env.RELEASE }}"
-          echo "Current symlink: ${{ env.RELEASE_DIR }}/current"
-          echo "Active release: $(readlink -f ${{ env.RELEASE_DIR }}/current | xargs basename)"
-
-      - name: Deployment Failed
-        if: failure()
-        run: |
-          echo "❌ Deployment Failed!"
-          echo "Attempting rollback to previous release..."
-          PREVIOUS=$(ls -dt ${{ env.RELEASE_PATH }}/*/ 2>/dev/null | head -2 | tail -1)
-          if [ -n "$PREVIOUS" ]; then
-            ln -nfs "$PREVIOUS" ${{ env.RELEASE_DIR }}/current
-            echo "Rollback completed"
-          else
-            echo "No previous release found for rollback"
-          fi
+        run: echo "✅ Release ${{ env.RELEASE }} is live!"
