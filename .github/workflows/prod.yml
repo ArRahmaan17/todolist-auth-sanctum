@@ -2,11 +2,19 @@ name: Production Deploy
 
 on:
   pull_request:
+    types: [closed]
     branches: ["prod"]
+
+env:
+  RELEASE_DIR: /usr/share/nginx/todo-prod
+  SHARED_DIR: /usr/share/nginx/todo-prod/shared
+  RELEASE_PATH: /usr/share/nginx/todo-prod/releases
 
 jobs:
   deploy:
+    if: github.event.pull_request.merged == true
     runs-on: self-hosted
+    timeout-minutes: 30
 
     steps:
     - name: Checkout Code
@@ -22,12 +30,15 @@ jobs:
 
     - name: Install Composer Dependencies
       run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+      working-directory: ./
 
     - name: Install Node Dependencies
-      run: npm install
+      run: npm ci --prefer-offline --no-audit
+      working-directory: ./
 
     - name: Build Assets
       run: npm run build
+      working-directory: ./
 
     # -------------------------
     # Create Release Folder
@@ -35,75 +46,127 @@ jobs:
 
     - name: Create Release Directory
       run: |
-        mkdir -p /usr/share/nginx/todo-prod/releases/$RELEASE
+        mkdir -p ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}
+        echo "Release directory created at: ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}"
+
     - name: Copy Files to Release
       run: |
-        rsync -av --exclude=".git" ./ /usr/share/nginx/todo-prod/releases/$RELEASE
+        rsync -av \
+          --exclude=".git" \
+          --exclude="node_modules" \
+          --exclude=".env" \
+          --exclude="storage" \
+          --exclude="bootstrap/cache" \
+          --exclude=".env.*.php" \
+          ./ ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/
+      working-directory: ./
 
     # -------------------------
-    # Shared Files
+    # Shared Files Setup
     # -------------------------
+
+    - name: Verify Shared Directory
+      run: |
+        mkdir -p ${{ env.SHARED_DIR }}/{storage,bootstrap/cache}
+        if [ ! -f "${{ env.SHARED_DIR }}/.env" ]; then
+          echo "ERROR: Shared .env file not found!"
+          exit 1
+        fi
 
     - name: Link Storage
       run: |
-        ln -nfs /usr/share/nginx/todo-prod/shared/storage /usr/share/nginx/todo-prod/releases/$RELEASE/storage/*
+        rm -rf ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/storage
+        ln -nfs ${{ env.SHARED_DIR }}/storage ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/storage
+
+    - name: Link Bootstrap Cache
+      run: |
+        rm -rf ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/bootstrap/cache
+        ln -nfs ${{ env.SHARED_DIR }}/bootstrap/cache ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/bootstrap/cache
 
     - name: Link .env
       run: |
-        ln -nfs /usr/share/nginx/todo-prod/shared/.env /usr/share/nginx/todo-prod/releases/$RELEASE/.env
+        rm -f ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/.env
+        ln -nfs ${{ env.SHARED_DIR }}/.env ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/.env
 
     # -------------------------
     # Laravel Setup
     # -------------------------
 
-    - name: Run Migration
-      run: |
-        cd /usr/share/nginx/todo-prod/releases/$RELEASE
-        php artisan migrate --force
-
     - name: Generate Swagger Docs
       run: |
-        cd /usr/share/nginx/todo-prod/releases/$RELEASE
+        cd ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}
         php artisan l5-swagger:generate
+      continue-on-error: true
+
+    - name: Run Migration
+      run: |
+        cd ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}
+        php artisan migrate --force
 
     - name: Optimize Laravel
       run: |
-        cd /usr/share/nginx/todo-prod/releases/$RELEASE
+        cd ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}
         php artisan config:cache
         php artisan route:cache
         php artisan view:cache
 
     # -------------------------
-    # Switch Release
+    # Switch Release (Atomic)
     # -------------------------
 
     - name: Activate New Release
       run: |
-        ln -nfs /usr/share/nginx/todo-prod/releases/$RELEASE /usr/share/nginx/todo-prod/current
+        ln -nfs ${{ env.RELEASE_PATH }}/${{ env.RELEASE }} ${{ env.RELEASE_DIR }}/current
+        echo "Release activated: ${{ env.RELEASE }}"
 
-    # generate swagger docs
-    - name: Generate Swagger Docs
-      run: | 
-        cd /usr/share/nginx/todo-prod/releases/$RELEASE && php artisan l5-swagger:generate
-        
     # -------------------------
     # Restart Services
     # -------------------------
 
     - name: Restart Queue
       run: |
-        cd /usr/share/nginx/todo-prod/current
+        cd ${{ env.RELEASE_DIR }}/current
         php artisan queue:restart || true
 
     - name: Reload FrankenPHP
       run: sudo systemctl restart frankenphp
+      timeout-minutes: 5
 
     # -------------------------
-    # Remove old release symlink and Cleanup Old Releases 
+    # Cleanup Old Releases (Safe Version)
     # -------------------------
 
     - name: Cleanup Old Releases
       run: |
-        for dir in $(ls -dt /usr/share/nginx/todo-prod/releases/* | grep -v "current" | grep -v "shared" | tail -n +6); do
-          rm -rf "$dir"
+        CURRENT_LINK=$(readlink -f ${{ env.RELEASE_DIR }}/current)
+        CURRENT_RELEASE=$(basename "$CURRENT_LINK")
+        
+        # Keep last 5 releases and current
+        ls -dt ${{ env.RELEASE_PATH }}/*/ | tail -n +6 | while read dir; do
+          RELEASE_NAME=$(basename "$dir")
+          if [ "$RELEASE_NAME" != "$CURRENT_RELEASE" ] && [ "$RELEASE_NAME" != "shared" ]; then
+            echo "Removing old release: $RELEASE_NAME"
+            rm -rf "$dir"
+          fi
         done
+
+    # -------------------------
+    # Deployment Summary
+    # -------------------------
+
+    - name: Deployment Summary
+      if: success()
+      run: |
+        echo "✅ Deployment Successful!"
+        echo "Release: ${{ env.RELEASE }}"
+        echo "Current symlink: ${{ env.RELEASE_DIR }}/current"
+        echo "Active release: $(readlink -f ${{ env.RELEASE_DIR }}/current | xargs basename)"
+
+    - name: Deployment Failed
+      if: failure()
+      run: |
+        echo "❌ Deployment Failed!"
+        echo "Reverting to previous release..."
+        cd ${{ env.RELEASE_DIR }}
+        PREVIOUS=$(ls -dt releases/*/ | head -2 | tail -1)
+        ln -nfs "$PREVIOUS" current
