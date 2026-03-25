@@ -23,7 +23,7 @@ class TodoTest extends TestCase
         $token = $user->createToken('test-token')->plainTextToken;
 
         $response = $this->getJson('/api/todos', [
-            'Authorization' => 'Bearer '.$token,
+            'Authorization' => 'Bearer ' . $token,
         ]);
 
         $response->assertStatus(200)
@@ -40,7 +40,7 @@ class TodoTest extends TestCase
         $response = $this->postJson('/api/todos', [
             'name' => 'New Todo',
         ], [
-            'Authorization' => 'Bearer '.$token,
+            'Authorization' => 'Bearer ' . $token,
         ]);
 
         $response->assertStatus(201)
@@ -70,7 +70,7 @@ class TodoTest extends TestCase
             'name' => 'Updated Todo',
             'is_done' => true,
         ], [
-            'Authorization' => 'Bearer '.$token,
+            'Authorization' => 'Bearer ' . $token,
         ]);
 
         $response->assertStatus(200)
@@ -98,7 +98,7 @@ class TodoTest extends TestCase
         $token = $user->createToken('test-token')->plainTextToken;
 
         $response = $this->deleteJson("/api/todos/{$todo->id}", [], [
-            'Authorization' => 'Bearer '.$token,
+            'Authorization' => 'Bearer ' . $token,
         ]);
 
         $response->assertStatus(200)
