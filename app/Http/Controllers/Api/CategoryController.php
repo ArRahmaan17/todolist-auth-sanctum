@@ -49,13 +49,13 @@ class CategoryController extends Controller
         if (! Category::storeNewCategory($newCategory)) {
             return response()->json([
                 'message' => 'failed store new category record',
-                'status' => false
+                'status' => false,
             ], 500);
         }
-        
+
         return response()->json([
             'message' => 'successfully store new category record',
-            'status' => true
+            'status' => true,
         ], 201);
     }
 

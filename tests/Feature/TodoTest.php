@@ -17,13 +17,13 @@ class TodoTest extends TestCase
         ListTodo::create([
             'name' => 'Test Todo',
             'user_id' => $user->id,
-            'is_done' => false
+            'is_done' => false,
         ]);
 
         $token = $user->createToken('test-token')->plainTextToken;
 
         $response = $this->getJson('/api/todos', [
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
         ]);
 
         $response->assertStatus(200)
@@ -40,7 +40,7 @@ class TodoTest extends TestCase
         $response = $this->postJson('/api/todos', [
             'name' => 'New Todo',
         ], [
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
         ]);
 
         $response->assertStatus(201)
@@ -61,7 +61,7 @@ class TodoTest extends TestCase
         $todo = ListTodo::create([
             'name' => 'Old Todo',
             'user_id' => $user->id,
-            'is_done' => false
+            'is_done' => false,
         ]);
 
         $token = $user->createToken('test-token')->plainTextToken;
@@ -70,7 +70,7 @@ class TodoTest extends TestCase
             'name' => 'Updated Todo',
             'is_done' => true,
         ], [
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
         ]);
 
         $response->assertStatus(200)
@@ -92,13 +92,13 @@ class TodoTest extends TestCase
         $todo = ListTodo::create([
             'name' => 'Delete Me',
             'user_id' => $user->id,
-            'is_done' => false
+            'is_done' => false,
         ]);
 
         $token = $user->createToken('test-token')->plainTextToken;
 
         $response = $this->deleteJson("/api/todos/{$todo->id}", [], [
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
         ]);
 
         $response->assertStatus(200)

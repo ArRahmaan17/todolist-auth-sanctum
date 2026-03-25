@@ -24,7 +24,7 @@ class LibraryController extends Controller
                 'data' => null,
             ], 404);
         }
-        
+
         return response()->json([
             'status' => true,
             'message' => 'We found the data',
@@ -42,7 +42,7 @@ class LibraryController extends Controller
     {
         $name = $request->query('name');
         $address = $request->query('address');
-        
+
         if (empty($name) && empty($address)) {
             return response()->json([
                 'status' => false,
@@ -56,7 +56,7 @@ class LibraryController extends Controller
         ];
 
         $data = Library::searchLibrary($filter);
-        
+
         if ($data->isEmpty()) {
             return response()->json([
                 'status' => false,
@@ -149,10 +149,18 @@ class LibraryController extends Controller
         $data = $request->only(['libraryName', 'libraryAddress', 'libraryPhone', 'libraryEmail']);
         // Map to DB columns
         $dbData = [];
-        if (isset($data['libraryName'])) $dbData['library_name'] = $data['libraryName'];
-        if (isset($data['libraryAddress'])) $dbData['library_address'] = $data['libraryAddress'];
-        if (isset($data['libraryPhone'])) $dbData['library_phone_number'] = $data['libraryPhone'];
-        if (isset($data['libraryEmail'])) $dbData['library_email'] = $data['libraryEmail'];
+        if (isset($data['libraryName'])) {
+            $dbData['library_name'] = $data['libraryName'];
+        }
+        if (isset($data['libraryAddress'])) {
+            $dbData['library_address'] = $data['libraryAddress'];
+        }
+        if (isset($data['libraryPhone'])) {
+            $dbData['library_phone_number'] = $data['libraryPhone'];
+        }
+        if (isset($data['libraryEmail'])) {
+            $dbData['library_email'] = $data['libraryEmail'];
+        }
 
         if (! Library::updateSpecifiedLibrary($id, $dbData)) {
             return response()->json([

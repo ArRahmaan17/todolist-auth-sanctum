@@ -24,7 +24,7 @@ class AuthorController extends Controller
                 'data' => null,
             ], 404);
         }
-        
+
         return response()->json([
             'status' => true,
             'message' => 'we successfully found the authors',
@@ -45,7 +45,6 @@ class AuthorController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  Request  $request
      * @return Response
      */
     public function store(Request $request)
@@ -83,7 +82,7 @@ class AuthorController extends Controller
                 'data' => null,
             ], 404);
         }
-        
+
         return response()->json([
             'status' => true,
             'message' => 'we successfully find the author',
@@ -94,7 +93,6 @@ class AuthorController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  Request  $request
      * @param  int  $id
      * @return Response
      */

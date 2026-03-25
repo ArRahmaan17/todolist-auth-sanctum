@@ -40,7 +40,6 @@ class BookController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  Request  $request
      * @return Response
      */
     public function store(Request $request)
@@ -55,17 +54,17 @@ class BookController extends Controller
         ]);
 
         $newBook = $request->only(['title', 'synopsis', 'quantity', 'status', 'author_id', 'category_id']);
-        
+
         if (! Books::create($newBook)) {
             return response()->json([
                 'message' => 'books cant be saved',
-                'status' => false
+                'status' => false,
             ], 500);
         }
-        
+
         return response()->json([
             'message' => 'successfully new books record',
-            'status' => true
+            'status' => true,
         ], 201);
     }
 
@@ -81,21 +80,20 @@ class BookController extends Controller
         if (! $book) {
             return response()->json([
                 'message' => 'book not found',
-                'status' => false
+                'status' => false,
             ], 404);
         }
 
         return response()->json([
             'message' => 'successfully found the book',
             'status' => true,
-            'data' => $book
+            'data' => $book,
         ], 200);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  Request  $request
      * @param  int  $id
      * @return Response
      */
@@ -105,7 +103,7 @@ class BookController extends Controller
         if (! $book) {
             return response()->json([
                 'message' => 'book not found',
-                'status' => false
+                'status' => false,
             ], 404);
         }
 
@@ -121,14 +119,14 @@ class BookController extends Controller
         if (! $book->update($request->all())) {
             return response()->json([
                 'message' => 'failed to update the book',
-                'status' => false
+                'status' => false,
             ], 500);
         }
 
         return response()->json([
             'message' => 'successfully updated the book',
             'status' => true,
-            'data' => $book
+            'data' => $book,
         ], 200);
     }
 
@@ -144,20 +142,20 @@ class BookController extends Controller
         if (! $book) {
             return response()->json([
                 'message' => 'book not found',
-                'status' => false
+                'status' => false,
             ], 404);
         }
 
         if (! $book->delete()) {
             return response()->json([
                 'message' => 'failed to delete the book',
-                'status' => false
+                'status' => false,
             ], 500);
         }
 
         return response()->json([
             'message' => 'successfully deleted the book',
-            'status' => true
+            'status' => true,
         ], 200);
     }
 }
