@@ -4,7 +4,7 @@ on:
   push:
     branches: ["staging"]
   pull_request:
-    branches: ["staging", "master"]
+    branches: ["staging"]
 
 jobs:
   laravel-tests:
