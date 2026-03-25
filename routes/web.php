@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Lists;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\UserController;
@@ -16,6 +17,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Home Page
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
 Route::group(['middleware' => 'guest'], function () {
     Route::get('/login', [UserController::class, 'index'])->name('login');
     Route::post('/login', [UserController::class, 'authenticate'])->name('login.post');
@@ -30,7 +34,7 @@ Route::group(['middleware' => 'guest'], function () {
 });
 
 Route::group(['middleware' => 'auth'], function () {
-    Route::get('/', [Lists::class, 'index'])->name('lists');
+    Route::get('/dashboard', [Lists::class, 'index'])->name('lists');
     Route::post('/lists', [Lists::class, 'store'])->name('lists.store');
     Route::put('/lists/{id}', [Lists::class, 'update'])->name('lists.update');
     Route::patch('/lists/{id}/toggle', [Lists::class, 'toggle'])->name('lists.toggle');
