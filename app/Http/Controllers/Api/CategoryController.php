@@ -44,16 +44,19 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $request->valiedate(['category_name' => 'required|alpha']);
+        $request->validate(['category_name' => 'required|string|max:255']);
         $newCategory = ['category_name' => $request->category_name];
         if (! Category::storeNewCategory($newCategory)) {
-            $response = ['message' => 'failed store new category record', 'status' => false];
-
-            return Response()->json($response, 401);
+            return response()->json([
+                'message' => 'failed store new category record',
+                'status' => false,
+            ], 500);
         }
-        $response = ['message' => 'successfully store new category record', 'status' => true];
 
-        return Response()->json($response, 200);
+        return response()->json([
+            'message' => 'successfully store new category record',
+            'status' => true,
+        ], 201);
     }
 
     /**

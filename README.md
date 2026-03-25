@@ -1,36 +1,43 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
 
-# Todo List App with Authentication
+# Todo List App with Sanctum Authentication
 
-A modern Todo List application built with Laravel and Tailwind CSS, featuring secure authentication and a responsive user interface.
+A modern Todo List and Library management application built with Laravel 10, featuring secure Sanctum-based API authentication and a responsive user interface.
 
 ## 🚀 Features
 
 ### ✅ Authentication
-- **Secure Login & Registration**: Full auth flow using Laravel session-based authentication.
+- **Sanctum-based API Auth**: Secure token-based authentication for API requests.
+- **Secure Login & Registration**: Full authentication flow for both Web and API.
 - **Protected Routes**: Middleware ensures only authenticated users can access their data.
-- **Guest Access**: Login and Register pages are only accessible to guests.
 
 ### 📝 Todo Management
 - **Dashboard**: A clean, modern dashboard to view all your tasks.
-- **Create Tasks**: Add new tasks quickly.
-- **Update Tasks**: Inline editing for task names.
-- **Toggle Status**: Mark tasks as complete/incomplete with a single click.
-- **Delete Tasks**: Remove tasks you no longer need.
-- **Data Isolation**: Users can only see and manage their own tasks.
+- **Full CRUD Support**: Create, read, update, and delete tasks.
+- **Toggle Status**: Mark tasks as complete/incomplete instantly.
+- **Data Isolation**: Users only see and manage their own tasks.
+
+### 📚 Library & Books Management
+- **Library API**: Manage libraries and search by name or address.
+- **Books & Authors**: Organize books with dedicated categories and author management.
 
 ### 🎨 Modern UI/UX
-- **Tailwind CSS v4**: Built with the latest version of Tailwind for rapid UI development.
-- **Responsive Design**: Looks great on desktop and mobile.
-- **Interactive Elements**: Hover effects, smooth transitions, and instant feedback (success messages).
+- **Tailwind CSS**: Built with modern Tailwind for rapid UI development.
+- **Responsive Design**: Optimized for both desktop and mobile.
+- **Interactive Elements**: Smooth transitions and instant feedback.
+
+### 📖 API Documentation
+- **Swagger Integration**: Interactive API documentation available at `/api/documentation`.
 
 ## 🛠 Tech Stack
 
-- **Framework**: Laravel 9.x
+- **Framework**: Laravel 10.x
+- **Authentication**: Laravel Sanctum
 - **Frontend**: Blade Templates
-- **Styling**: Tailwind CSS v4
+- **Styling**: Tailwind CSS
 - **Bundler**: Vite
 - **Database**: MySQL
+- **API Docs**: L5-Swagger
 
 ## ⚙️ Installation
 
@@ -40,30 +47,25 @@ A modern Todo List application built with Laravel and Tailwind CSS, featuring se
    cd todolist-auth-sanctum
    ```
 
-2. **Install PHP Dependencies**
+2. **Install Dependencies**
    ```bash
    composer install
-   ```
-
-3. **Install NPM Dependencies**
-   ```bash
    npm install
    ```
 
-4. **Environment Setup**
+3. **Environment Setup**
    ```bash
    cp .env.example .env
    php artisan key:generate
    ```
    *Configure your database settings in `.env`*
 
-5. **Run Migrations & Seeders**
+4. **Run Migrations**
    ```bash
-   php artisan migrate:fresh --seed
+   php artisan migrate:fresh
    ```
 
-6. **Start Development Server**
-   You need to run both the Laravel server and Vite for assets:
+5. **Start Development Server**
    ```bash
    # Terminal 1
    php artisan serve
@@ -72,7 +74,32 @@ A modern Todo List application built with Laravel and Tailwind CSS, featuring se
    npm run dev
    ```
 
-7. **Build for Production** (Optional)
-   ```bash
-   npm run build
-   ```
+## 🧪 Testing
+
+The project includes comprehensive feature tests for Authentication and Todo management.
+
+Run tests using Artisan:
+```bash
+php artisan test
+```
+
+Or using PHPUnit:
+```bash
+./vendor/bin/phpunit
+```
+
+## 📜 API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST   | `/api/registration` | Register a new user |
+| POST   | `/api/login` | Login and get Bearer Token |
+| POST   | `/api/logout` | Revoke current token |
+| GET    | `/api/todos` | List all user todos |
+| POST   | `/api/todos` | Create a new todo |
+| GET    | `/api/todos/{id}` | Show specified todo |
+| PUT    | `/api/todos/{id}` | Update specified todo |
+| DELETE | `/api/todos/{id}` | Delete specified todo |
+| GET    | `/api/library` | List all libraries |
+| GET    | `/api/author` | List all authors |
+| GET    | `/api/books` | List all books |
