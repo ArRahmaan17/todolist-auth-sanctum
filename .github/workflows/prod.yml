@@ -81,6 +81,11 @@ jobs:
       run: |
         ln -nfs /usr/share/nginx/todo-prod/releases/$RELEASE /usr/share/nginx/todo-prod/current
 
+    # generate swagger docs
+    - name: Generate Swagger Docs
+      run: | 
+        cd /usr/share/nginx/todo-prod/releases/$RELEASE && php artisan l5-swagger:generate
+        
     # -------------------------
     # Restart Services
     # -------------------------
