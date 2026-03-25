@@ -104,3 +104,13 @@ Or using PHPUnit:
 | GET    | `/api/library` | List all libraries |
 | GET    | `/api/author` | List all authors |
 | GET    | `/api/books` | List all books |
+
+## 📝 Guideline commit message 
+- `feat:` A new feature
+- `fix:` A bug fix
+- `docs:` Documentation only changes
+- `style:` Changes that don't affect code meaning (formatting, missing semicolons, etc.)
+- `refactor:` Code change that neither fixes a bug nor adds a feature
+- `perf:` Code change that improves performance
+- `test:` Adding missing tests or correcting existing tests
+- `chore:` Changes to build process, dependencies, or tooling
