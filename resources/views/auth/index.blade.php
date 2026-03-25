@@ -43,7 +43,7 @@
                         <div class="space-y-2">
                             <div class="flex items-center justify-between ml-1">
                                 <label for="password" class="text-sm font-medium text-blue-600 dark:text-slate-300">Password</label>
-                                <a href="#" class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">Forgot password?</a>
+                                <a href="{{ route('password.request') }}" class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">Forgot password?</a>
                             </div>
                             <input id="password" name="password" type="password" autocomplete="current-password" required
                                 class="w-full bg-slate-400 dark:bg-slate-950/50 border border-white/10 rounded-xl py-3 px-4 text-white placeholder-slate-300 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-300"
