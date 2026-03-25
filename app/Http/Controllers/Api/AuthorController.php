@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\AuthorRequest;
 use App\Models\Authors;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -18,22 +17,19 @@ class AuthorController extends Controller
     public function index()
     {
         $authorsData = Authors::getAllAuthors();
-        if (json_encode($authorsData) === '[]') {
-            $response = [
+        if ($authorsData->isEmpty()) {
+            return response()->json([
                 'status' => false,
                 'message' => 'we failed to found the authors',
                 'data' => null,
-            ];
-
-            return Response()->json($response, 404);
+            ], 404);
         }
-        $response = [
+
+        return response()->json([
             'status' => true,
             'message' => 'we successfully found the authors',
             'data' => $authorsData,
-        ];
-
-        return Response()->json($response, 200);
+        ], 200);
     }
 
     /**
@@ -49,19 +45,25 @@ class AuthorController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  Request  $request
      * @return Response
      */
-    public function store(AuthorRequest $request)
+    public function store(Request $request)
     {
-        if (! Authors::createAuthors($request->authorsAccount())) {
-            $response = ['status' => false, 'message' => 'we failed to create the author'];
+        $request->validate([
+            'authors_name' => 'required|string|max:255',
+        ]);
 
-            return Response()->json($response, 401);
+        if (! Authors::createAuthors($request->only('authors_name'))) {
+            return response()->json([
+                'status' => false,
+                'message' => 'we failed to create the author',
+            ], 401);
         }
-        $response = ['status' => true, 'message' => 'we successfully create the author'];
 
-        return Response()->json($response, 200);
+        return response()->json([
+            'status' => true,
+            'message' => 'we successfully create the author',
+        ], 200);
     }
 
     /**
@@ -74,32 +76,51 @@ class AuthorController extends Controller
     {
         $dataAuthor = Authors::showSpecifiedAuthors($id);
         if ($dataAuthor == null) {
-            $response = ['status' => false, 'message' => 'we failed to find the author', 'data' => null];
-
-            return Response()->json($response, 401);
+            return response()->json([
+                'status' => false,
+                'message' => 'we failed to find the author',
+                'data' => null,
+            ], 404);
         }
-        $response = ['status' => true, 'message' => 'we successfully find the author', 'data' => $dataAuthor];
 
-        return Response()->json($response, 200);
+        return response()->json([
+            'status' => true,
+            'message' => 'we successfully find the author',
+            'data' => $dataAuthor,
+        ], 200);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  Request  $request
      * @param  int  $id
      * @return Response
      */
-    public function update(AuthorRequest $request, $id)
+    public function update(Request $request, $id)
     {
-        if (! Authors::updateAuthors($request->authorsAccount(), $id)) {
-            $response = ['status' => false, 'message' => 'we failed to update the author'];
-
-            return Response()->json($response, 401);
+        $author = Authors::showSpecifiedAuthors($id);
+        if (! $author) {
+            return response()->json([
+                'status' => false,
+                'message' => 'author not found',
+            ], 404);
         }
-        $response = ['status' => true, 'message' => 'we successfully to update the author'];
 
-        return Response()->json($response, 200);
+        $request->validate([
+            'authors_name' => 'required|string|max:255',
+        ]);
+
+        if (! $author->update($request->only('authors_name'))) {
+            return response()->json([
+                'status' => false,
+                'message' => 'we failed to update the author',
+            ], 401);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'we successfully to update the author',
+        ], 200);
     }
 
     /**
@@ -110,13 +131,24 @@ class AuthorController extends Controller
      */
     public function destroy($id)
     {
-        if (! Authors::deleteAuthors($id)) {
-            $response = ['status' => false, 'message' => 'we failed to delete the author'];
-
-            return Response()->json($response, 401);
+        $author = Authors::showSpecifiedAuthors($id);
+        if (! $author) {
+            return response()->json([
+                'status' => false,
+                'message' => 'author not found',
+            ], 404);
         }
-        $response = ['status' => true, 'message' => 'we successfully to delete the author'];
 
-        return Response()->json($response, 200);
+        if (! $author->delete()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'we failed to delete the author',
+            ], 401);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'we successfully to delete the author',
+        ], 200);
     }
 }
