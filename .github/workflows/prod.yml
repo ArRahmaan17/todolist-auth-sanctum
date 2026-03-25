@@ -12,7 +12,7 @@ env:
 
 jobs:
   deploy:
-    # Only run if the PR was merged, not just closed
+    # Ensuring it only runs if the PR was actually merged
     if: github.event.pull_request.merged == true
     runs-on: self-hosted
     timeout-minutes: 30
@@ -24,21 +24,21 @@ jobs:
       - name: Set Release ID
         run: echo "RELEASE=$(date +%s)" >> $GITHUB_ENV
 
-      # -------------------------
-      # Build Process
-      # -------------------------
+      # -------------------------------------------------------
+      # 1. Production Build (PHP & JS)
+      # -------------------------------------------------------
       - name: Install Composer Dependencies
         run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
       - name: Install Node Dependencies
         run: npm install --prefer-offline --no-audit
 
-      - name: Build Assets
+      - name: Build Production Assets
         run: npm run build
 
-      # -------------------------
-      # Prepare Release
-      # -------------------------
+      # -------------------------------------------------------
+      # 2. Prepare Release Folder
+      # -------------------------------------------------------
       - name: Create Release Directory
         run: mkdir -p ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}
 
@@ -51,24 +51,26 @@ jobs:
             --exclude="bootstrap/cache" \
             ./ ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/
 
-      - name: Link Shared Files
+      - name: Link Shared Files & .env
         run: |
+          # Ensure shared dirs exist
           mkdir -p ${{ env.SHARED_DIR }}/{storage,bootstrap/cache}
           
-          # Link Storage & Cache
+          # Link Storage
           rm -rf ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/storage
           ln -nfs ${{ env.SHARED_DIR }}/storage ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/storage
           
+          # Link Cache
           rm -rf ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/bootstrap/cache
           ln -nfs ${{ env.SHARED_DIR }}/bootstrap/cache ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/bootstrap/cache
           
-          # Link .env
+          # Link .env (Crucial: must exist in shared folder)
           ln -nfs ${{ env.SHARED_DIR }}/.env ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}/.env
 
-      # -------------------------
-      # Laravel Production Setup
-      # -------------------------
-      - name: Migrate and Optimize
+      # -------------------------------------------------------
+      # 3. Laravel Production Optimizations
+      # -------------------------------------------------------
+      - name: Run Migrations & Optimize
         run: |
           cd ${{ env.RELEASE_PATH }}/${{ env.RELEASE }}
           php artisan migrate --force
@@ -77,9 +79,9 @@ jobs:
           php artisan view:cache
           php artisan l5-swagger:generate || true
 
-      # -------------------------
-      # Activation
-      # -------------------------
+      # -------------------------------------------------------
+      # 4. Activation (The Atomic Switch)
+      # -------------------------------------------------------
       - name: Activate New Release
         run: ln -nfs ${{ env.RELEASE_PATH }}/${{ env.RELEASE }} ${{ env.RELEASE_DIR }}/current
 
@@ -89,20 +91,22 @@ jobs:
           cd ${{ env.RELEASE_DIR }}/current
           php artisan queue:restart || true
 
-      # -------------------------
-      # Cleanup (Keep only 3)
-      # -------------------------
+      # -------------------------------------------------------
+      # 5. Cleanup Old Releases (Keep only 3)
+      # -------------------------------------------------------
       - name: Cleanup Old Releases
         run: |
+          # Find the absolute path of the current live release
           CURRENT_LIVE=$(readlink -f ${{ env.RELEASE_DIR }}/current)
           
-          # List all directories, newest first, skip top 3 (tail -n +4)
+          # List all directories, sort by time (newest first), skip the first 3
+          # We use tail -n +4 to start from the 4th folder onwards
           ls -dt ${{ env.RELEASE_PATH }}/*/ | tail -n +4 | while read dir; do
             ABS_DIR=$(readlink -f "$dir")
             
-            # Don't delete if it's the live one or the shared folder
+            # Safety Check: Don't delete if it's the current live folder or 'shared'
             if [ "$ABS_DIR" != "$CURRENT_LIVE" ] && [[ "$dir" != *"shared"* ]]; then
-              echo "Removing old release: $dir"
+              echo "Deleting old release: $dir"
               rm -rf "$dir"
             fi
           done
