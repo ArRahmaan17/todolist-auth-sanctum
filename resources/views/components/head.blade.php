@@ -9,7 +9,6 @@
 <meta property="og:image" content="https://todos.rahmaanms.my.id/preview-300x300.png">
 <meta property="og:url" content="{{ env('APP_URL') }}">
 <meta property="og:type" content="website">
-
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://todos.rahmaanms.my.id/preview-300x300.png">
 <meta property="twitter:description" content="Simple todo app built with Laravel with Sanctum authentication">
