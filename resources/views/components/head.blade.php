@@ -6,11 +6,11 @@
 <link rel="manifest" href="{{ asset('site.webmanifest') }}" />
 <meta property="og:title" content="Todo - Secure To-Do App">
 <meta property="og:description" content="Simple todo app built with Laravel with Sanctum authentication">
-<meta property="og:image" content="https://todos.rahmaanms.my.id/preview-300x300.png">
+<meta property="og:image" content="https://todos.rahmaanms.my.id/preview_new.png">
 <meta property="og:url" content="{{ env('APP_URL') }}">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://todos.rahmaanms.my.id/preview-300x300.png">
+<meta name="twitter:image" content="https://todos.rahmaanms.my.id/preview_new.png">
 <meta property="twitter:description" content="Simple todo app built with Laravel with Sanctum authentication">
 
 <script>
