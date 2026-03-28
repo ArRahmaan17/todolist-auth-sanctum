@@ -6,12 +6,12 @@
 <link rel="manifest" href="{{ asset('site.webmanifest') }}" />
 <meta property="og:title" content="Todo - Secure To-Do App">
 <meta property="og:description" content="Simple todo app built with Laravel with Sanctum authentication">
-<meta property="og:image" content="{{env('APP_URL')}}/preview.png">
+<meta property="og:image" content="{{ asset('preview.png')}}">
 <meta property="og:url" content="{{env('APP_URL')}}">
 <meta property="og:type" content="website">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="{{env('APP_URL')}}/preview.png">
+<meta name="twitter:image" content="{{ asset('preview.png')}}">
 
 <script>
     if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
