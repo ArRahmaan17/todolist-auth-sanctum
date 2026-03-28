@@ -1,4 +1,5 @@
 <link rel="icon" type="image/png" href="{{ asset('favicon-96x96.png') }}" sizes="96x96" />
+<meta name="google-site-verification" content="EyjTD61x9ueE1BTZ2XJuPICh7ScbaK28qfK5TfBtlD0" />
 <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}" />
 <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
 <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}" />
