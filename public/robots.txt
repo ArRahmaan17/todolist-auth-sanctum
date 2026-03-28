@@ -1,11 +1,17 @@
 User-agent: *
-Disallow: /
+Allow: /
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
 
-# Allow Meta preview bots
-User-agent: facebookexternalhit
+# Allow social media bots to crawl and show previews
+User-agent: Facebot
 Allow: /
 
-User-agent: Facebot
+User-agent: facebookexternalhit
 Allow: /
 
 User-agent: Meta-ExternalAgent
@@ -14,10 +20,8 @@ Allow: /
 User-agent: Meta-ExternalFetcher
 Allow: /
 
-# Optional: allow Twitter preview
 User-agent: Twitterbot
 Allow: /
 
-# Optional: allow Discord preview
 User-agent: Discordbot
 Allow: /
