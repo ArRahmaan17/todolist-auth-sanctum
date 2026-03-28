@@ -92,17 +92,17 @@ jobs:
       # -------------------------
       # Cleanup (Keep only 3)
       # -------------------------
-      - name: Cleanup Old Releases
-        run: |
-          CURRENT_LIVE=$(readlink -f ${{ env.RELEASE_DIR }}/current)
+      # - name: Cleanup Old Releases
+      #   run: |
+      #     CURRENT_LIVE=$(readlink -f ${{ env.RELEASE_DIR }}/current)
           
-          # List all directories, newest first, skip top 3
-          ls -dt ${{ env.RELEASE_PATH }}/*/ | tail -n +4 | while read dir; do
-            ABS_DIR=$(readlink -f "$dir")
+      #     # List all directories, newest first, skip top 3
+      #     ls -dt ${{ env.RELEASE_PATH }}/*/ | tail -n +4 | while read dir; do
+      #       ABS_DIR=$(readlink -f "$dir")
             
-            # Use sudo to force removal of root-owned cache files
-            if [ "$ABS_DIR" != "$CURRENT_LIVE" ] && [[ "$dir" != *"shared"* ]]; then
-              echo "Removing old release: $dir"
-              sudo rm -rf "$dir"
-            fi
-          done
+      #       # Use sudo to force removal of root-owned cache files
+      #       if [ "$ABS_DIR" != "$CURRENT_LIVE" ] && [[ "$dir" != *"shared"* ]]; then
+      #         echo "Removing old release: $dir"
+      #         sudo rm -rf "$dir"
+      #       fi
+      #     done
