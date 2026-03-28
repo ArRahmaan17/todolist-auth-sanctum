@@ -6,6 +6,7 @@
 <meta name="apple-mobile-web-app-title" content="{{ $app_name ?? 'Todos' }}" />
 <link rel="manifest" href="{{ asset('site.webmanifest') }}" />
 <meta property="og:title" content="Todo - Secure To-Do App">
+<meta name=description content="Simple todo app built with Laravel with Sanctum authentication">
 <meta property="og:description" content="Simple todo app built with Laravel with Sanctum authentication">
 <meta property="og:image" content="https://todos.rahmaanms.my.id/preview_new.png">
 <meta property="og:url" content="{{ env('APP_URL') }}">
