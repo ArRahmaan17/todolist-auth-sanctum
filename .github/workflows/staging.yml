@@ -2,7 +2,7 @@ name: Staging and Prod Runner
 
 on:
   pull_request:
-    branches: ["staging", "prod"]
+    branches: ["staging"]
 
 jobs:
   laravel-tests:
