@@ -15,6 +15,9 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://todos.rahmaanms.my.id/preview_new.png">
 <meta property="twitter:description" content="Simple todo app built with Laravel with Sanctum authentication">
+<!-- Cloudflare Web Analytics -->
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f4f33162a98b4a88b19e2f6ab1989244"}'></script>
+<!-- End Cloudflare Web Analytics -->
 
 <script>
     if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
